@@ -1,0 +1,2760 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IGRIO — Smart Irrigation Scheduling &amp; Water Management</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Barlow Condensed for Bold Display Headlines & Inter for Clean Legibility -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Custom Dark Reddish-Brown Earth Theme & Component Styles -->
+  <style>
+    :root {
+      --earth-dark: #170B09;
+      --earth-surface: #20100D;
+      --earth-card: #2B1612;
+      --earth-deep: #120806;
+      --earth-border: #43231D;
+      --gold-harvest: #F4B740;
+      --terracotta: #E26D38;
+      --leaf-green: #68B849;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--earth-dark);
+      color: #FFF8EE;
+      overflow-x: hidden;
+    }
+
+    .font-display {
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.02em;
+    }
+
+    /* Supplied IGRIO logo artwork: screen blending visually removes its dark JPEG backdrop. */
+    .igrio-logo-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      mix-blend-mode: screen;
+      filter: contrast(1.08) saturate(1.06);
+    }
+
+    .igrio-legacy-logo {
+      display: none;
+    }
+
+    /* Static Pictorial Hero Display Headlines (Zero Hero Animations) */
+    .hero-title-white {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFF7E6 55%, #DFC8B4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 6px 18px rgba(10, 4, 3, 0.92));
+    }
+
+    .hero-title-gold {
+      background: linear-gradient(180deg, #FDE047 0%, #F4B740 48%, #E26D38 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 6px 18px rgba(10, 4, 3, 0.92));
+    }
+
+    /* Rich Mahogany-Espresso & Roasted Terracotta Surfaces */
+    .earth-card {
+      background: linear-gradient(180deg, rgba(43, 22, 18, 0.96) 0%, rgba(32, 16, 13, 0.98) 100%);
+      border: 1px solid rgba(226, 109, 56, 0.25);
+      box-shadow: 0 14px 36px rgba(10, 4, 3, 0.65);
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .earth-card:hover {
+      border-color: rgba(244, 183, 64, 0.55);
+    }
+
+    .earth-recessed {
+      background-color: var(--earth-deep);
+      border: 1px solid rgba(226, 109, 56, 0.22);
+    }
+
+    .earth-input {
+      background-color: var(--earth-deep);
+      border: 1.5px solid #4A2720;
+      color: #FFF8EE;
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .earth-input:focus {
+      outline: none;
+      border-color: #F4B740;
+      box-shadow: 0 0 0 3px rgba(244, 183, 64, 0.22);
+    }
+
+    /* Three-way farmer language toggle: every available language stays visible. */
+    .farmer-language-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      padding: 0.25rem;
+      border: 1px solid #43231D;
+      border-radius: 0.85rem;
+      background: #120806;
+    }
+
+    .farmer-language-toggle button {
+      border: 0;
+      border-radius: 0.6rem;
+      padding: 0.45rem 0.65rem;
+      color: #E5C9B0;
+      background: transparent;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .farmer-language-toggle button:hover {
+      color: #FFF8EE;
+      background: #2B1612;
+    }
+
+    .farmer-language-toggle button.is-active {
+      color: #170B09;
+      background: #F4B740;
+      box-shadow: 0 2px 8px rgba(244, 183, 64, 0.3);
+    }
+
+    /* Station Signboards Along the 7-Step S-Curve Path */
+    .station-signboard {
+      background: linear-gradient(180deg, #F6C452 0%, #E29B28 100%);
+      color: #170B09;
+      border: 2px solid #FFF4D2;
+      box-shadow: 0 10px 24px rgba(10, 4, 3, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    }
+
+    /* Circular Crop Selector Medallion Card */
+    .crop-medallion-card {
+      background: linear-gradient(180deg, #321915 0%, #20100D 100%);
+      border: 1.5px solid rgba(226, 109, 56, 0.28);
+      transition: all 0.25s ease;
+    }
+
+    .crop-medallion-card:hover {
+      border-color: rgba(244, 183, 64, 0.75);
+      transform: translateY(-2px);
+    }
+
+    .crop-medallion-card.is-active {
+      background: linear-gradient(180deg, #42211B 0%, #27130F 100%);
+      border-color: #F4B740;
+      box-shadow: 0 0 0 3px rgba(244, 183, 64, 0.24), 0 14px 28px rgba(10, 4, 3, 0.65);
+    }
+
+    /* Custom Range Slider Accent */
+    input[type="range"] {
+      accent-color: #F4B740;
+    }
+  </style>
+</head>
+<body class="bg-[#170B09] text-[#FFF8EE] antialiased selection:bg-[#F4B740] selection:text-[#170B09]">
+
+  <!-- ===================================================================== -->
+  <!-- NON-BLOCKING TOAST NOTIFICATION BANNER (NEVER USES alert/confirm)     -->
+  <!-- ===================================================================== -->
+  <div id="igrio-toast" class="fixed bottom-5 right-5 z-50 max-w-sm w-full transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300">
+    <div id="igrio-toast-box" class="rounded-2xl p-4 shadow-2xl border-2 bg-[#2B1612] border-[#F4B740] text-[#FFF8EE] flex items-start gap-3">
+      <span id="igrio-toast-icon" class="text-xl leading-none mt-0.5">🌾</span>
+      <div class="flex-1 min-w-0">
+        <p id="igrio-toast-title" class="font-extrabold text-sm text-[#F4B740]">IGRIO Update</p>
+        <p id="igrio-toast-msg" class="text-xs text-[#F3DEC8] mt-0.5 leading-relaxed"></p>
+      </div>
+      <button type="button" onclick="hideToast()" aria-label="Dismiss notification" class="text-[#D8B99E] hover:text-white text-sm font-bold px-1 cursor-pointer">✕</button>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FARMER LOGIN & NEW ACCOUNT REGISTRATION MODAL                         -->
+  <!-- ===================================================================== -->
+  <div id="auth-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="relative w-full max-w-md rounded-3xl bg-[#20100D] border border-[#F4B740]/45 p-6 sm:p-7 shadow-2xl">
+      <button type="button" onclick="closeAuthModal()" aria-label="Close modal" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#120806] hover:bg-amber-500/20 text-[#FFF8EE] flex items-center justify-center border border-[#43231D] cursor-pointer">
+        ✕
+      </button>
+
+      <!-- Modal Header with Custom IGRIO Leaf & Water Droplet SVG Logo -->
+      <div class="flex items-center gap-3 mb-4">
+        <img src="igrio-logo-illustration.jpeg" alt="IGRIO" class="igrio-logo-image w-28 shrink-0 select-none" />
+        <svg viewBox="0 0 240 94" class="igrio-legacy-logo w-28 h-auto shrink-0 select-none" aria-label="IGRIO Logo">
+          <defs>
+            <linearGradient id="igrioTextModal" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#FFFDF7" />
+              <stop offset="48%" stop-color="#FDE047" />
+              <stop offset="100%" stop-color="#E29A24" />
+            </linearGradient>
+            <linearGradient id="igrioLeafModal" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#9BE15D" />
+              <stop offset="100%" stop-color="#3E8E27" />
+            </linearGradient>
+            <linearGradient id="igrioDropModal" x1="20%" y1="0%" x2="80%" y2="100%">
+              <stop offset="0%" stop-color="#7DD3FC" />
+              <stop offset="55%" stop-color="#0284C7" />
+              <stop offset="100%" stop-color="#1E3A8A" />
+            </linearGradient>
+          </defs>
+          <path d="M 38 34 C 16 32, 8 16, 14 7 C 27 8, 38 19, 38 34 Z" fill="url(#igrioLeafModal)" stroke="#170B09" stroke-width="2.5" />
+          <path d="M 41 32 C 34 15, 42 4, 54 4 C 57 16, 51 27, 41 32 Z" fill="url(#igrioLeafModal)" stroke="#170B09" stroke-width="2.5" />
+          <path d="M 206 34 C 212 18, 224 12, 232 16 C 231 27, 221 34, 206 34 Z" fill="url(#igrioLeafModal)" stroke="#170B09" stroke-width="2.2" />
+          <path d="M 148 6 C 148 6, 137 20, 137 28 C 137 34.5, 142 39, 148 39 C 154 39, 159 34.5, 159 28 C 159 20, 148 6, 148 6 Z" fill="url(#igrioDropModal)" stroke="#170B09" stroke-width="2.4" />
+          <ellipse cx="144.5" cy="25" rx="2.3" ry="4.5" transform="rotate(-18 144.5 25)" fill="#E0F2FE" opacity="0.85" />
+          <text x="122" y="79" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="64" letter-spacing="2" fill="url(#igrioTextModal)" stroke="#170B09" stroke-width="6" paint-order="stroke fill">IGRIO</text>
+        </svg>
+        <div>
+          <h3 class="font-display text-2xl sm:text-3xl font-black uppercase tracking-wide text-[#FFF8EE]">Farmer Account</h3>
+          <p class="text-xs text-[#E5C9B0]">Register a new account or sign in to add your fields &amp; crops</p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <div class="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-[#120806] border border-[#43231D] mb-5">
+        <button type="button" id="modal-tab-register" onclick="switchAuthMode('register')" class="py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-[#F4B740] text-[#170B09] shadow cursor-pointer transition">
+          New Farmer Register
+        </button>
+        <button type="button" id="modal-tab-login" onclick="switchAuthMode('login')" class="py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider text-[#E5C9B0] hover:text-white cursor-pointer transition">
+          Existing Login
+        </button>
+      </div>
+
+      <div class="mb-5">
+        <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="form_language">Farmer Form Language</label>
+        <div class="farmer-language-toggle" role="group" aria-label="Farmer form language">
+          <button type="button" data-farmer-language="en" onclick="setFarmerLanguage('en')">English</button>
+          <button type="button" data-farmer-language="bn" onclick="setFarmerLanguage('bn')">বাংলা</button>
+          <button type="button" data-farmer-language="hi" onclick="setFarmerLanguage('hi')">हिन्दी</button>
+        </div>
+      </div>
+
+      <!-- New Farmer Registration Form -->
+      <form id="modal-register-form" onsubmit="handleRegisterSubmit(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="full_name">Full Name</label>
+          <input type="text" id="modal-reg-name" required class="earth-input" data-i18n-placeholder="full_name_placeholder" placeholder="Enter your full name" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="contact">Mobile Number or Email</label>
+          <input type="text" id="modal-reg-contact" required class="earth-input" data-i18n-placeholder="contact_example" placeholder="e.g., +91 98XXX XXXXX or farmer@example.com" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="password">Password</label>
+          <input type="password" id="modal-reg-password" required class="earth-input" data-i18n-placeholder="password_create" placeholder="Create a password" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="village_district">Village / District Location</label>
+          <select id="modal-reg-region" class="earth-input cursor-pointer">
+            <option value="23.2324,87.8615,Bardhaman Alluvial Belt, West Bengal">Bardhaman Alluvial Belt, West Bengal</option>
+            <option value="23.4710,88.5565,Nadia Hooghly Basin, West Bengal">Nadia Hooghly Basin, West Bengal</option>
+            <option value="30.9010,75.8573,Ludhiana Wheat Plain, Punjab">Ludhiana Wheat Plain, Punjab</option>
+            <option value="19.9975,73.7898,Nashik Vegetable Cluster, Maharashtra">Nashik Vegetable Cluster, Maharashtra</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-[#68B849] to-emerald-600 hover:brightness-110 text-[#170B09] font-extrabold text-sm shadow-lg transition cursor-pointer">
+          <span data-i18n="create_start">Create Account &amp; Start Adding Fields →</span>
+        </button>
+      </form>
+
+      <!-- Existing Farmer Login Form -->
+      <form id="modal-login-form" onsubmit="handleLoginSubmit(event)" class="hidden space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1.5">Mobile Number or Email</label>
+          <input type="text" id="modal-login-contact" required class="earth-input" placeholder="Enter your registered mobile or email" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1.5">Password</label>
+          <input type="password" id="modal-login-password" required class="earth-input" placeholder="Enter your password" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-[#F4B740] to-[#E26D38] hover:brightness-110 text-[#170B09] font-extrabold text-sm shadow-lg transition cursor-pointer">
+          Sign In to My Farm →
+        </button>
+        <p class="text-[11px] text-center text-[#C6A88E]">
+          First time using IGRIO? Switch to <button type="button" onclick="switchAuthMode('register')" class="text-[#F4B740] underline font-bold cursor-pointer">New Farmer Register</button>.
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- STICKY TOP NAVIGATION BAR (Appears When Scrolling Past Hero)        -->
+  <!-- ===================================================================== -->
+  <header id="sticky-navbar" class="fixed top-0 left-0 right-0 z-40 px-3 sm:px-6 py-2.5 bg-[#170B09]/95 backdrop-blur-md border-b border-[#43231D] shadow-2xl transform -translate-y-full opacity-0 pointer-events-none transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      <!-- Brand Logo -->
+      <a href="#home" class="flex items-center gap-2 shrink-0" aria-label="IGRIO Home">
+        <img src="igrio-logo-illustration.jpeg" alt="" class="igrio-logo-image w-24 sm:w-28" />
+        <svg viewBox="0 0 240 94" class="igrio-legacy-logo w-24 sm:w-28 h-auto" aria-hidden="true">
+          <path d="M 38 34 C 16 32, 8 16, 14 7 C 27 8, 38 19, 38 34 Z" fill="#68B849" stroke="#170B09" stroke-width="2.5" />
+          <path d="M 41 32 C 34 15, 42 4, 54 4 C 57 16, 51 27, 41 32 Z" fill="#68B849" stroke="#170B09" stroke-width="2.5" />
+          <path d="M 206 34 C 212 18, 224 12, 232 16 C 231 27, 221 34, 206 34 Z" fill="#68B849" stroke="#170B09" stroke-width="2.2" />
+          <path d="M 148 6 C 148 6, 137 20, 137 28 C 137 34.5, 142 39, 148 39 C 154 39, 159 34.5, 159 28 C 159 20, 148 6, 148 6 Z" fill="#0EA5E9" stroke="#170B09" stroke-width="2.4" />
+          <text x="122" y="79" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="64" letter-spacing="2" fill="#F4B740" stroke="#170B09" stroke-width="5" paint-order="stroke fill">IGRIO</text>
+        </svg>
+      </a>
+
+      <!-- Center Pill Navigation -->
+      <nav aria-label="Sticky Navigation" class="hidden md:flex items-center gap-1 bg-[#120806] border border-[#43231D] px-2.5 py-1 rounded-full">
+        <a href="#home" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-[#F4B740] hover:bg-[#2B1612] transition">HOME</a>
+        <a href="#about" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-[#FFF8EE] hover:text-[#F4B740] transition">ABOUT</a>
+        <a href="#irrigation-tools" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-[#FFF8EE] hover:text-[#F4B740] transition">IRRIGATION TOOLS</a>
+        <a href="#crop-guide" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-[#FFF8EE] hover:text-[#F4B740] transition">CROP GUIDE</a>
+        <a href="#community" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-[#FFF8EE] hover:text-[#F4B740] transition">COMMUNITY</a>
+        <a href="#contact" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-[#FFF8EE] hover:text-[#F4B740] transition">CONTACT US</a>
+      </nav>
+
+      <!-- Right Auth Controls -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="sticky-login-btn" type="button" onclick="openAuthModal('register')" class="px-3.5 py-1.5 rounded-full bg-[#F4B740] hover:brightness-110 text-[#170B09] font-extrabold text-xs shadow transition cursor-pointer">
+          Farmer Login / Register
+        </button>
+        <div id="sticky-logged-box" class="hidden items-center gap-2 px-3 py-1.5 rounded-full bg-[#2B1612] border border-[#F4B740]/50 text-xs font-bold">
+          <span id="sticky-farmer-name" class="text-[#F4B740] max-w-[110px] truncate">Farmer</span>
+          <button type="button" onclick="logoutFarmer()" class="px-2 py-0.5 rounded-full bg-rose-900/80 text-rose-200 text-[11px] font-bold cursor-pointer">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- 1. STATIC PICTORIAL LANDING HERO (ZERO HERO ANIMATIONS)               -->
+  <!-- ===================================================================== -->
+  <section id="home" class="relative w-full bg-[#170B09] overflow-hidden border-b border-[#43231D]">
+    <div id="hero-banner-container" class="relative w-full min-h-[660px] sm:min-h-[720px] lg:min-h-[770px] flex flex-col justify-between select-none">
+
+      <!-- Irrigated field hero image supplied for the landing page -->
+      <img
+        src="igrio-hero-irrigation-field-v2.png"
+        alt="Center-pivot irrigation watering a wheat field at sunset"
+        class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+      />
+
+      <!-- Subtle Dark Edge Contrast Gradient -->
+      <div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#170B09]/45 via-transparent to-[#170B09]/65"></div>
+
+      <!-- TOP BAR: Custom IGRIO Logo (Left), Centered Pill Nav, Farmer Login / Register (Right) -->
+      <div class="relative z-20 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4 sm:pt-6 flex items-center justify-between gap-3">
+        <!-- Top-Left Custom IGRIO SVG Logo -->
+        <a href="#home" aria-label="IGRIO Home" class="shrink-0">
+          <img src="igrio-logo-illustration.jpeg" alt="" class="igrio-logo-image w-28 sm:w-36 drop-shadow-[0_6px_16px_rgba(0,0,0,0.85)]" />
+          <svg viewBox="0 0 240 94" class="igrio-legacy-logo w-28 sm:w-36 h-auto drop-shadow-[0_6px_16px_rgba(0,0,0,0.85)]" aria-hidden="true">
+            <defs>
+              <linearGradient id="igrioTextHero" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#FFFDF7" />
+                <stop offset="48%" stop-color="#FDE047" />
+                <stop offset="100%" stop-color="#E29A24" />
+              </linearGradient>
+              <linearGradient id="igrioLeafHero" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#9BE15D" />
+                <stop offset="100%" stop-color="#3E8E27" />
+              </linearGradient>
+              <linearGradient id="igrioDropHero" x1="20%" y1="0%" x2="80%" y2="100%">
+                <stop offset="0%" stop-color="#7DD3FC" />
+                <stop offset="55%" stop-color="#0284C7" />
+                <stop offset="100%" stop-color="#1E3A8A" />
+              </linearGradient>
+            </defs>
+            <path d="M 38 34 C 16 32, 8 16, 14 7 C 27 8, 38 19, 38 34 Z" fill="url(#igrioLeafHero)" stroke="#170B09" stroke-width="2.5" />
+            <path d="M 41 32 C 34 15, 42 4, 54 4 C 57 16, 51 27, 41 32 Z" fill="url(#igrioLeafHero)" stroke="#170B09" stroke-width="2.5" />
+            <path d="M 206 34 C 212 18, 224 12, 232 16 C 231 27, 221 34, 206 34 Z" fill="url(#igrioLeafHero)" stroke="#170B09" stroke-width="2.2" />
+            <path d="M 148 6 C 148 6, 137 20, 137 28 C 137 34.5, 142 39, 148 39 C 154 39, 159 34.5, 159 28 C 159 20, 148 6, 148 6 Z" fill="url(#igrioDropHero)" stroke="#170B09" stroke-width="2.4" />
+            <ellipse cx="144.5" cy="25" rx="2.3" ry="4.5" transform="rotate(-18 144.5 25)" fill="#E0F2FE" opacity="0.85" />
+            <text x="122" y="79" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="64" letter-spacing="2" fill="url(#igrioTextHero)" stroke="#170B09" stroke-width="6" paint-order="stroke fill">IGRIO</text>
+          </svg>
+        </a>
+
+        <!-- Top-Center Pill Navigation -->
+        <nav aria-label="Primary Hero Navigation" class="hidden lg:flex items-center gap-1 bg-[#170B09]/85 backdrop-blur-md border border-[#43231D] px-3 py-1.5 rounded-full shadow-2xl">
+          <a href="#home" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase bg-[#2B1612] text-[#F4B740]">HOME</a>
+          <a href="#about" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase text-[#FFF8EE] hover:text-[#F4B740] transition">ABOUT</a>
+          <a href="#irrigation-tools" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase text-[#FFF8EE] hover:text-[#F4B740] transition">IRRIGATION TOOLS</a>
+          <a href="#crop-guide" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase text-[#FFF8EE] hover:text-[#F4B740] transition">CROP GUIDE</a>
+          <a href="#community" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase text-[#FFF8EE] hover:text-[#F4B740] transition">COMMUNITY</a>
+          <a href="#contact" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase text-[#FFF8EE] hover:text-[#F4B740] transition">CONTACT US</a>
+        </nav>
+
+        <!-- Top-Right Farmer Login / Register Pill -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="hero-login-btn" type="button" onclick="openAuthModal('register')" class="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#170B09]/85 hover:bg-[#2B1612] text-[#FFF8EE] border border-[#FFF8EE]/35 hover:border-[#F4B740] font-bold text-xs sm:text-sm shadow-xl backdrop-blur-md transition cursor-pointer">
+            Farmer Login / Register
+          </button>
+
+          <div id="hero-logged-box" class="hidden items-center gap-2 px-3.5 py-2 rounded-full bg-[#170B09]/90 border border-[#F4B740]/50 shadow-xl backdrop-blur-md">
+            <span class="text-xs sm:text-sm font-extrabold text-[#F4B740] max-w-[130px] truncate" id="hero-farmer-name">Farmer</span>
+            <button type="button" onclick="logoutFarmer()" class="px-2.5 py-0.5 rounded-full bg-rose-900/80 hover:bg-rose-800 text-rose-200 text-xs font-bold cursor-pointer">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER DISPLAY HEADLINES + GOLDEN PILL BADGE -->
+      <div class="relative z-20 max-w-5xl mx-auto px-4 text-center my-auto py-8 sm:py-10">
+        <h1 class="font-display font-black uppercase tracking-tight leading-[0.94] select-none">
+          <span class="block text-5xl sm:text-7xl md:text-8xl lg:text-[6.2rem] hero-title-white">
+            IRRIGATE RIGHT
+          </span>
+          <span class="block text-5xl sm:text-7xl md:text-8xl lg:text-[6.2rem] hero-title-gold mt-1">
+            HARVEST MORE
+          </span>
+        </h1>
+
+        <div class="mt-4 sm:mt-5 inline-flex items-center justify-center px-6 sm:px-8 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-b from-[#E0A138] to-[#9E6518] border border-[#FDE047]/45 shadow-[0_10px_28px_rgba(10,4,3,0.8)]">
+          <span class="font-display text-lg sm:text-2xl font-extrabold uppercase tracking-wider text-[#170B09]">
+            SIMPLE • SMART • FOR FARMERS
+          </span>
+        </div>
+      </div>
+
+      <!-- LOWER-MIDDLE 4-COLUMN METRICS STRIP + ACTION BUTTONS -->
+      <div class="relative z-20 max-w-4xl w-full mx-auto px-4 pb-8 sm:pb-12 flex flex-col items-center">
+        <div class="w-full max-w-2xl rounded-2xl bg-[#170B09]/90 border border-[#43231D] shadow-[0_18px_40px_rgba(0,0,0,0.88)] backdrop-blur-md px-3 sm:px-6 py-4 sm:py-5">
+          <div class="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#43231D] text-center">
+            <div class="py-2 sm:py-0 px-2">
+              <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#E5C9B0]">EST. WATER NEED</div>
+              <div id="hero-metric-water" class="font-display text-2xl sm:text-3xl font-black text-[#F4B740] mt-1">-- L/DAY</div>
+            </div>
+            <div class="py-2 sm:py-0 px-2">
+              <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#E5C9B0]">EXPECTED RAIN</div>
+              <div id="hero-metric-rain" class="font-display text-2xl sm:text-3xl font-black text-amber-300 mt-1">0.0 MM</div>
+            </div>
+            <div class="py-2 sm:py-0 px-2">
+              <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#E5C9B0]">ACTIVE FIELDS</div>
+              <div id="hero-metric-fields" class="font-display text-2xl sm:text-3xl font-black text-[#E26D38] mt-1">00</div>
+            </div>
+            <div class="py-2 sm:py-0 px-2">
+              <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#E5C9B0]">EST. WATER SAVED</div>
+              <div id="hero-metric-saved" class="font-display text-2xl sm:text-3xl font-black text-[#FFF8EE] mt-1">0 L</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Centered Action Buttons -->
+        <div class="mt-4 sm:mt-5 flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full">
+          <button type="button" onclick="handleRegisterStartClick()" class="inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_10px_25px_rgba(37,99,235,0.45)] transition cursor-pointer">
+            <span>📄 REGISTER FIELD &amp; START</span>
+          </button>
+
+          <a href="#crop-guide" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl bg-[#170B09]/85 hover:bg-[#2B1612] text-[#FFF8EE] border border-[#FFF8EE]/40 hover:border-[#F4B740] font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-xl backdrop-blur-md transition">
+            <span>VIEW CROPS &amp; SOILS ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- MULTI-CROP CIRCULAR SELECTOR & DAILY WATER REQUIREMENT BANNER       -->
+  <!-- ===================================================================== -->
+  <section id="planted-crops-bar" class="bg-[#120806] border-b border-[#43231D] py-6 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <div>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#F4B740]">MULTI-CROP DAILY WATER (LITRES / DAY)</span>
+          <h2 class="font-display text-2xl sm:text-3xl font-black uppercase tracking-wide text-[#FFF8EE]">
+            Your Planted Crops — Click a Crop
+          </h2>
+        </div>
+        <div id="crop-registration-status" class="text-xs font-bold px-3 py-1.5 rounded-full bg-[#20100D] text-[#E5C9B0] border border-[#43231D] self-start sm:self-auto">
+          No crops registered yet
+        </div>
+      </div>
+
+      <!-- Empty-State Notice When No Crops Are Registered Yet -->
+      <div id="no-crops-notice" class="rounded-2xl bg-[#20100D] border border-[#43231D] p-4 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="text-xs sm:text-sm text-[#E5C9B0]">
+          <strong class="text-[#F4B740]">No crops registered yet.</strong> Sign in and register your first field to track daily water needs (Litres/day) across one or more crops. Below are the supported crop options ready to register:
+        </div>
+        <button type="button" onclick="handleRegisterStartClick()" class="px-4 py-2 rounded-xl bg-[#F4B740] hover:brightness-110 text-[#170B09] text-xs font-extrabold whitespace-nowrap cursor-pointer">
+          + Register First Field &amp; Crop
+        </button>
+      </div>
+
+      <!-- Circular Crop Medallion Buttons Grid -->
+      <div id="circular-crops-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-5"></div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 2. WINDING 7-STEP S-CURVE FIELD-PATH LADDER (STEPS 1 TO 7)          -->
+  <!-- ===================================================================== -->
+  <section id="irrigation-tools" class="relative py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-[#170B09] via-[#20100D] to-[#170B09]">
+    <div class="max-w-6xl mx-auto">
+      <!-- Section Heading -->
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <span class="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-[#F4B740]/15 text-[#F4B740] border border-[#F4B740]/30 mb-3">
+          Interactive 7-Step Field-Path Ladder • Software-Based FAO-56 Model
+        </span>
+        <h2 class="font-display text-3xl sm:text-5xl font-black uppercase tracking-tight text-[#FFF8EE]">
+          Follow the Winding Path From Login to Daily Watering
+        </h2>
+        <p class="text-sm sm:text-base text-[#E5C9B0] mt-2">
+          Scroll down or click any station signboard along the S-curve canal track. The <strong>Golden Crop Sheaf &amp; Water Droplet</strong> emblem moves smoothly along the path as you explore each step.
+        </p>
+      </div>
+
+      <!-- Winding Ladder Container with SVG S-Curve Track & Moving Crop Emblem -->
+      <div id="winding-ladder-wrapper" class="relative">
+
+        <!-- Desktop Winding S-Curve Track & Golden Crop Sheaf + Droplet Emblem -->
+        <div class="hidden md:block absolute inset-0 pointer-events-none z-10" aria-hidden="true">
+          <svg id="winding-track-svg" viewBox="0 0 1000 3300" preserveAspectRatio="none" class="w-full h-full overflow-visible">
+            <defs>
+              <linearGradient id="canalGlowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#F4B740" />
+                <stop offset="50%" stop-color="#E26D38" />
+                <stop offset="100%" stop-color="#68B849" />
+              </linearGradient>
+            </defs>
+            <!-- Outer Earth Bed -->
+            <path d="M 500 60 C 820 260, 820 520, 500 720 C 180 920, 180 1180, 500 1380 C 820 1580, 820 1840, 500 2040 C 180 2240, 180 2500, 500 2700 C 760 2880, 720 3100, 500 3240"
+                  fill="none" stroke="#120806" stroke-width="26" stroke-linecap="round" />
+            <!-- Inner Glowing Canal Track -->
+            <path id="winding-s-path"
+                  d="M 500 60 C 820 260, 820 520, 500 720 C 180 920, 180 1180, 500 1380 C 820 1580, 820 1840, 500 2040 C 180 2240, 180 2500, 500 2700 C 760 2880, 720 3100, 500 3240"
+                  fill="none" stroke="url(#canalGlowGrad)" stroke-width="7" stroke-dasharray="16 12" stroke-linecap="round" opacity="0.85" />
+          </svg>
+
+          <!-- Moving Crop Emblem (Golden Crop Sheaf + Water Droplet) -->
+          <div id="crop-track-traveler" class="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center will-change-transform">
+            <div class="w-16 h-16 rounded-full bg-[#2B1612] border-2 border-[#F4B740] shadow-[0_0_24px_rgba(244,183,64,0.65)] flex items-center justify-center">
+              <!-- Crop Sheaf & Water Droplet SVG Emblem -->
+              <svg viewBox="0 0 64 64" class="w-11 h-11" aria-hidden="true">
+                <!-- Golden Crop Stalks & Wheat Heads -->
+                <path d="M 24 52 C 23 36, 20 22, 16 12" stroke="#F4B740" stroke-width="3" stroke-linecap="round" fill="none" />
+                <path d="M 25 48 C 26 34, 27 20, 28 10" stroke="#FDE047" stroke-width="3" stroke-linecap="round" fill="none" />
+                <path d="M 26 52 C 29 37, 34 24, 39 14" stroke="#E29A24" stroke-width="3" stroke-linecap="round" fill="none" />
+                <ellipse cx="15" cy="18" rx="3.2" ry="6.5" transform="rotate(-25 15 18)" fill="#F4B740" />
+                <ellipse cx="21" cy="14" rx="3.2" ry="6.5" transform="rotate(-12 21 14)" fill="#FDE047" />
+                <ellipse cx="28" cy="11" rx="3.2" ry="6.5" fill="#F4B740" />
+                <ellipse cx="35" cy="15" rx="3.2" ry="6.5" transform="rotate(18 35 15)" fill="#FDE047" />
+                <ellipse cx="40" cy="20" rx="3.2" ry="6.5" transform="rotate(30 40 20)" fill="#E29A24" />
+                <!-- Binding Ribbon -->
+                <path d="M 19 42 Q 26 45 33 42" stroke="#68B849" stroke-width="3.2" stroke-linecap="round" fill="none" />
+                <!-- Blue Water Droplet Beside Crop Sheaf -->
+                <path d="M 46 24 C 46 24, 38 35, 38 41 C 38 46, 41.6 49.5, 46 49.5 C 50.4 49.5, 54 46, 54 41 C 54 35, 46 24, 46 24 Z" fill="#0EA5E9" stroke="#FFF8EE" stroke-width="1.6" />
+              </svg>
+            </div>
+            <span id="traveler-step-label" class="mt-1 px-2.5 py-0.5 rounded-full bg-[#F4B740] text-[#170B09] text-[10px] font-black uppercase tracking-wider shadow">
+              STEP 1
+            </span>
+          </div>
+        </div>
+
+        <!-- Stations Stack -->
+        <div class="relative z-20 space-y-12 sm:space-y-16">
+
+          <!-- ============================================================= -->
+          <!-- STEP 1: FARMER LOGIN & ACCOUNT SETUP (MODULE 1)               -->
+          <!-- ============================================================= -->
+          <div id="step-1" onclick="focusStep(1, false)" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div class="md:col-span-5 flex flex-col items-start md:items-end md:pr-8">
+              <div class="station-signboard rounded-2xl px-5 py-3 inline-block mb-3">
+                <div class="text-[11px] font-black tracking-widest uppercase opacity-80">MODULE 01 • ACCOUNT</div>
+                <div class="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight leading-none mt-0.5">STEP 1: FARMER LOGIN</div>
+              </div>
+              <p class="text-xs sm:text-sm text-[#E5C9B0] md:text-right max-w-xs">
+                Create a new farmer account or sign in to save your own fields, crops, coordinates, and irrigation logbook.
+              </p>
+            </div>
+
+            <div class="md:col-span-7 earth-card rounded-3xl p-5 sm:p-7">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-[#43231D]">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F4B740]/15 text-[#F4B740] border border-[#F4B740]/30">New Member &amp; Existing Farmer Access</span>
+                  <h3 class="text-lg sm:text-xl font-extrabold mt-1">Farmer Login &amp; New Account</h3>
+                </div>
+                <span id="step1-auth-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-[#120806] text-[#E5C9B0] border border-[#43231D]">
+                  ● Logged Out (New Visitor)
+                </span>
+              </div>
+
+              <div class="mb-4 flex items-center gap-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#E5C9B0]" data-i18n="form_language">Farmer Form Language</span>
+                <div class="farmer-language-toggle" role="group" aria-label="Farmer form language">
+                  <button type="button" data-farmer-language="en" onclick="setFarmerLanguage('en')">English</button>
+                  <button type="button" data-farmer-language="bn" onclick="setFarmerLanguage('bn')">বাংলা</button>
+                  <button type="button" data-farmer-language="hi" onclick="setFarmerLanguage('hi')">हिन्दी</button>
+                </div>
+              </div>
+
+              <!-- Logged-Out Inline Form -->
+              <div id="step1-logged-out-box" class="space-y-4">
+                <p class="text-xs sm:text-sm text-[#E5C9B0]">
+                  Start fresh with <strong>IGRIO</strong>. Fill in your details below to register a new account, or open the login window if you already have an account.
+                </p>
+
+                <form onsubmit="handleInlineRegisterSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="full_name">Full Name</label>
+                    <input type="text" id="step1-name" required class="earth-input" data-i18n-placeholder="full_name_placeholder" placeholder="Enter your full name" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="contact">Mobile Number or Email</label>
+                    <input type="text" id="step1-contact" required class="earth-input" data-i18n-placeholder="contact_short" placeholder="Enter mobile or email" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="password">Password</label>
+                    <input type="password" id="step1-password" required class="earth-input" data-i18n-placeholder="password_create_short" placeholder="Create password" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="village_district">Village / District Location</label>
+                    <select id="step1-region" onchange="previewRegionWeather(this.value)" class="earth-input cursor-pointer">
+                      <option value="23.2324,87.8615,Bardhaman Alluvial Belt, West Bengal">Bardhaman Alluvial Belt, West Bengal</option>
+                      <option value="23.4710,88.5565,Nadia Hooghly Basin, West Bengal">Nadia Hooghly Basin, West Bengal</option>
+                      <option value="30.9010,75.8573,Ludhiana Wheat Plain, Punjab">Ludhiana Wheat Plain, Punjab</option>
+                      <option value="19.9975,73.7898,Nashik Vegetable Cluster, Maharashtra">Nashik Vegetable Cluster, Maharashtra</option>
+                    </select>
+                  </div>
+                  <div class="sm:col-span-2 flex flex-wrap items-center justify-between gap-3 pt-2">
+                    <button type="button" onclick="openAuthModal('login')" class="px-4 py-2.5 rounded-xl bg-[#120806] hover:bg-[#321915] text-[#F4B740] border border-[#43231D] text-xs font-bold transition cursor-pointer">
+                      Existing Farmer Login
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#F4B740] hover:brightness-110 text-[#170B09] text-xs font-extrabold shadow transition cursor-pointer">
+                      Create Account &amp; Continue →
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Logged-In Farmer Summary Box -->
+              <div id="step1-logged-in-box" class="hidden space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="p-3.5 rounded-2xl earth-recessed">
+                    <span class="text-[11px] uppercase tracking-wider text-[#C6A88E] font-bold">Signed-In Farmer</span>
+                    <p id="profile-name-display" class="font-bold text-base text-[#FFF8EE] mt-0.5">—</p>
+                    <p id="profile-contact-display" class="text-xs text-[#E5C9B0] mt-0.5">—</p>
+                  </div>
+                  <div class="p-3.5 rounded-2xl earth-recessed">
+                    <span class="text-[11px] uppercase tracking-wider text-[#C6A88E] font-bold">Farm Location &amp; GPS</span>
+                    <p id="profile-location-display" class="font-bold text-sm text-[#F4B740] mt-0.5">—</p>
+                    <p id="profile-coords-display" class="text-xs text-[#E5C9B0] mt-0.5">—</p>
+                  </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                  <button type="button" onclick="useDeviceGPS()" class="px-4 py-2 rounded-xl bg-[#2B1612] hover:bg-[#3A1E18] text-[#F4B740] border border-[#43231D] text-xs font-bold transition cursor-pointer">
+                    📍 Detect My GPS Location
+                  </button>
+                  <button type="button" onclick="logoutFarmer()" class="px-4 py-2 rounded-xl bg-rose-950/80 hover:bg-rose-900 text-rose-200 border border-rose-700/50 text-xs font-bold transition cursor-pointer">
+                    Log Out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================= -->
+          <!-- STEP 2: FIELD REGISTRATION & MANAGEMENT (MODULE 3)            -->
+          <!-- ============================================================= -->
+          <div id="step-2" onclick="focusStep(2, false)" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div class="md:col-span-7 order-2 md:order-1 earth-card rounded-3xl p-5 sm:p-7">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-[#43231D]">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#68B849]/15 text-[#86EFAC] border border-[#68B849]/30">New Member Field Setup</span>
+                  <h3 class="text-lg sm:text-xl font-extrabold mt-1">Register &amp; Manage Your Fields</h3>
+                </div>
+                <span id="field-count-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-[#120806] text-[#F4B740] border border-[#43231D]">0 Fields Registered</span>
+              </div>
+
+              <!-- Prompt When Logged Out -->
+              <div id="step2-login-prompt" class="p-5 rounded-2xl earth-recessed text-center space-y-3 mb-4">
+                <p class="text-sm font-bold text-[#F4B740]">New Member Access — Sign In to Add Your Fields</p>
+                <p class="text-xs text-[#E5C9B0] max-w-md mx-auto">
+                  No fields or crops are pre-loaded for new visitors. Register or log in first so you can name your own plots and add crops.
+                </p>
+                <button type="button" onclick="openAuthModal('register')" class="px-5 py-2.5 rounded-xl bg-[#F4B740] hover:brightness-110 text-[#170B09] text-xs font-extrabold shadow transition cursor-pointer">
+                  Register / Log In to Add Field →
+                </button>
+              </div>
+
+              <!-- Field Registration Form (Active Once Logged In) -->
+              <form id="add-field-form" onsubmit="addNewField(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-5">
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="field_name">Field Name</label>
+                  <input type="text" id="new-field-name" required class="earth-input" data-i18n-placeholder="field_name_placeholder" placeholder="e.g., Plot A, Riverbank Field" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="field_location">Field Location / Landmark</label>
+                  <input type="text" id="new-field-location" class="earth-input" data-i18n-placeholder="field_location_placeholder" placeholder="e.g., Near Village Canal / Block 2" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1">
+                    <span data-i18n="field_area">Field Area (m²)</span> <span id="area-helper-text" class="text-[#F4B740] font-semibold"></span>
+                  </label>
+                  <input type="number" id="new-field-area" required min="100" step="50" value="4047" oninput="updateAreaHelper(this.value)" class="earth-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="soil_type">Soil Type</label>
+                  <select id="new-field-soil" class="earth-input cursor-pointer">
+                    <option value="alluvial" data-i18n="soil_alluvial">Alluvial Soil (AWC 165 mm/m)</option>
+                    <option value="loamy" data-i18n="soil_loamy">Loamy Soil (AWC 150 mm/m)</option>
+                    <option value="clay" data-i18n="soil_clay">Clay Soil (AWC 175 mm/m)</option>
+                    <option value="sandy" data-i18n="soil_sandy">Sandy Soil (AWC 75 mm/m)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="crop_type">Crop Type</label>
+                  <select id="new-field-crop" class="earth-input cursor-pointer">
+                    <option value="rice" data-i18n="crop_rice">Rice (Paddy)</option>
+                    <option value="wheat" data-i18n="crop_wheat">Wheat</option>
+                    <option value="maize" data-i18n="crop_maize">Maize (Corn)</option>
+                    <option value="tomato" data-i18n="crop_tomato">Tomato</option>
+                    <option value="potato" data-i18n="crop_potato">Potato</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="planting_date">Planting Date</label>
+                  <input type="date" id="new-field-date" required class="earth-input" />
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="growth_stage">Current Crop Growth Stage</label>
+                  <select id="new-field-stage" class="earth-input cursor-pointer">
+                    <option value="initial" data-i18n="stage_initial">Initial / Seedling Stage</option>
+                    <option value="mid" data-i18n="stage_mid">Mid-Season / Active Growth (Peak Water)</option>
+                    <option value="late" data-i18n="stage_late">Late Season / Ripening &amp; Harvest</option>
+                  </select>
+                </div>
+                <div class="sm:col-span-2">
+                  <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-[#68B849] to-emerald-600 hover:brightness-110 text-[#170B09] font-extrabold text-sm shadow-lg transition cursor-pointer">
+                    <span data-i18n="add_field">+ Add Field &amp; Register Crop</span>
+                  </button>
+                </div>
+              </form>
+
+              <!-- Registered Fields List -->
+              <div id="registered-fields-list" class="space-y-2.5 max-h-64 overflow-y-auto pr-1"></div>
+            </div>
+
+            <div class="md:col-span-5 order-1 md:order-2 flex flex-col items-start md:pl-8">
+              <div class="station-signboard rounded-2xl px-5 py-3 inline-block mb-3">
+                <div class="text-[11px] font-black tracking-widest uppercase opacity-80">MODULE 03 • FIELDS</div>
+                <div class="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight leading-none mt-0.5">STEP 2: MANAGE FIELDS</div>
+              </div>
+              <p class="text-xs sm:text-sm text-[#E5C9B0] max-w-xs">
+                Register your own fields one by one after signing in. Each field calculates daily water requirement in Litres/day and updates your circular crop buttons.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============================================================= -->
+          <!-- STEP 3: WEATHER DATA COLLECTION (MODULE 4)                    -->
+          <!-- ============================================================= -->
+          <div id="step-3" onclick="focusStep(3, false)" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div class="md:col-span-5 flex flex-col items-start md:items-end md:pr-8">
+              <div class="station-signboard rounded-2xl px-5 py-3 inline-block mb-3">
+                <div class="text-[11px] font-black tracking-widest uppercase opacity-80">MODULE 04 • METEOROLOGY</div>
+                <div class="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight leading-none mt-0.5">STEP 3: LIVE WEATHER</div>
+              </div>
+              <p class="text-xs sm:text-sm text-[#E5C9B0] md:text-right max-w-xs">
+                Fetches weather from Open-Meteo for your location: temperature, humidity, wind speed, solar radiation, reference evapotranspiration (ET₀), and multi-day rain forecasts.
+              </p>
+            </div>
+
+            <div class="md:col-span-7 earth-card rounded-3xl p-5 sm:p-7">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-[#43231D]">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F4B740]/15 text-[#F4B740] border border-[#F4B740]/30">Open-Meteo API Integration</span>
+                  <h3 class="text-lg sm:text-xl font-extrabold mt-1">Current Weather &amp; Forecast</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span id="weather-source-badge" class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#120806] text-[#F4B740] border border-[#43231D]">Syncing...</span>
+                  <button type="button" onclick="fetchWeatherData(true)" class="px-3 py-1 rounded-full text-xs font-bold bg-[#2B1612] hover:bg-[#3A1E18] text-[#FFF8EE] border border-[#43231D] cursor-pointer">
+                    ↻ Refresh
+                  </button>
+                </div>
+              </div>
+
+              <!-- Current Weather Readouts -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                <div class="p-3 rounded-2xl earth-recessed">
+                  <span class="text-[11px] text-[#C6A88E] font-semibold">Temperature</span>
+                  <p id="wx-temp" class="text-lg font-extrabold text-[#FFF8EE] mt-0.5">--°C</p>
+                  <p id="wx-minmax" class="text-[11px] text-[#C6A88E]">Min --° / Max --°</p>
+                </div>
+                <div class="p-3 rounded-2xl earth-recessed">
+                  <span class="text-[11px] text-[#C6A88E] font-semibold">Humidity &amp; Wind</span>
+                  <p id="wx-humidity" class="text-lg font-extrabold text-sky-300 mt-0.5">--%</p>
+                  <p id="wx-wind" class="text-[11px] text-[#C6A88E]">Wind -- km/h</p>
+                </div>
+                <div class="p-3 rounded-2xl earth-recessed">
+                  <span class="text-[11px] text-[#C6A88E] font-semibold">Solar &amp; Rain</span>
+                  <p id="wx-rain" class="text-lg font-extrabold text-amber-300 mt-0.5">-- mm</p>
+                  <p id="wx-solar" class="text-[11px] text-[#C6A88E]">Solar -- MJ/m²</p>
+                </div>
+                <div class="p-3 rounded-2xl earth-recessed">
+                  <span class="text-[11px] text-[#C6A88E] font-semibold">Reference ET₀</span>
+                  <p id="wx-et0" class="text-lg font-extrabold text-[#F4B740] mt-0.5">-- mm/day</p>
+                  <p class="text-[11px] text-[#C6A88E]">FAO-56 Baseline</p>
+                </div>
+              </div>
+
+              <!-- Interactive 48h Rain & ET0 Scenario Simulator -->
+              <div class="p-3.5 rounded-2xl earth-recessed mb-4 space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                  <label for="sim-rain-slider" class="font-bold text-[#F4B740]">48-Hour Expected Rainfall Adjustment:</label>
+                  <span id="sim-rain-value" class="font-extrabold text-[#FFF8EE] bg-[#2B1612] px-2.5 py-0.5 rounded-full border border-[#43231D]">0.0 mm</span>
+                </div>
+                <input id="sim-rain-slider" type="range" min="0" max="60" step="1" value="0" oninput="onRainSliderChange(this.value)" class="w-full cursor-pointer" />
+                <div class="flex items-center justify-between text-xs pt-1">
+                  <label for="sim-et0-input" class="font-semibold text-[#E5C9B0]">Reference ET₀ Override (mm/day):</label>
+                  <input id="sim-et0-input" type="number" min="1.0" max="12.0" step="0.1" value="4.8" onchange="onEt0OverrideChange(this.value)" class="w-24 px-2.5 py-1 rounded-lg bg-[#20100D] border border-[#4A2720] text-right font-bold text-[#F4B740]" />
+                </div>
+              </div>
+
+              <!-- 5-Day Forecast Strip -->
+              <div id="forecast-strip" class="grid grid-cols-5 gap-2 text-center"></div>
+            </div>
+          </div>
+
+          <!-- ============================================================= -->
+          <!-- STEP 4: FAO-56 CROP WATER REQUIREMENT & LITRES/DAY (MODULE 5/7) -->
+          <!-- ============================================================= -->
+          <div id="step-4" onclick="focusStep(4, false)" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div class="md:col-span-7 order-2 md:order-1 earth-card rounded-3xl p-5 sm:p-7">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-[#43231D]">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F4B740]/15 text-[#F4B740] border border-[#F4B740]/30">FAO-56 Equation: ETc = ET₀ × Kc</span>
+                  <h3 class="text-lg sm:text-xl font-extrabold mt-1">Daily Water Requirement (Litres / Day)</h3>
+                </div>
+                <span id="active-calc-field-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-[#120806] text-[#F4B740] border border-[#43231D]">No Field Selected</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                <div class="p-3.5 rounded-2xl earth-recessed">
+                  <span class="text-[11px] text-[#C6A88E] font-bold uppercase">Crop Coefficient (Kc)</span>
+                  <p id="calc-kc" class="text-2xl font-black text-[#F4B740] mt-1">1.05</p>
+                  <p id="calc-kc-stage" class="text-[11px] text-[#C6A88E]">Mid-Season Growth</p>
+                </div>
+                <div class="p-3.5 rounded-2xl earth-recessed">
+                  <span class="text-[11px] text-[#C6A88E] font-bold uppercase">Crop ETc (mm/day)</span>
+                  <p id="calc-etc" class="text-2xl font-black text-[#FFF8EE] mt-1">5.04 mm/d</p>
+                  <p class="text-[11px] text-[#C6A88E]">ET₀ × Kc Daily Loss</p>
+                </div>
+                <div class="p-3.5 rounded-2xl earth-recessed border border-[#68B849]/40">
+                  <span class="text-[11px] text-[#86EFAC] font-bold uppercase">Daily Water Needed</span>
+                  <p id="calc-litres-per-day" class="text-2xl font-black text-[#86EFAC] mt-1">0 L/day</p>
+                  <p id="calc-area-ref" class="text-[11px] text-[#C6A88E]">ETc × Field Area (m²)</p>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl earth-recessed text-xs text-[#E5C9B0] space-y-1">
+                <p><strong class="text-[#F4B740]">Daily Volume Formula:</strong> 1 mm of water over 1 m² equals 1 Litre. Therefore, <strong>Daily Water (Litres/day) = ETc (mm/day) × Field Area (m²)</strong>.</p>
+                <p id="calc-gross-note" class="text-[#C6A88E]">Register a field in Step 2 to compute exact Litres/day and gross irrigation volume adjusted for method efficiency.</p>
+              </div>
+            </div>
+
+            <div class="md:col-span-5 order-1 md:order-2 flex flex-col items-start md:pl-8">
+              <div class="station-signboard rounded-2xl px-5 py-3 inline-block mb-3">
+                <div class="text-[11px] font-black tracking-widest uppercase opacity-80">MODULE 05 &amp; 07 • FAO-56</div>
+                <div class="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight leading-none mt-0.5">STEP 4: LITRES / DAY</div>
+              </div>
+              <p class="text-xs sm:text-sm text-[#E5C9B0] max-w-xs">
+                Combines reference evapotranspiration (ET₀) with crop growth stage coefficient (Kc) to calculate daily crop water use in millimetres and <strong>Litres/day</strong>.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============================================================= -->
+          <!-- STEP 5: SOFTWARE-ESTIMATED SOIL WATER-BALANCE (MODULE 6)      -->
+          <!-- ============================================================= -->
+          <div id="step-5" onclick="focusStep(5, false)" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div class="md:col-span-5 flex flex-col items-start md:items-end md:pr-8">
+              <div class="station-signboard rounded-2xl px-5 py-3 inline-block mb-3">
+                <div class="text-[11px] font-black tracking-widest uppercase opacity-80">MODULE 06 • ROOT ZONE</div>
+                <div class="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight leading-none mt-0.5">STEP 5: SOIL BALANCE</div>
+              </div>
+              <p class="text-xs sm:text-sm text-[#E5C9B0] md:text-right max-w-xs">
+                Software-based root-zone water balance using crop ETc, effective rainfall, recorded irrigation, and soil water-holding capacity—no physical sensors required.
+              </p>
+            </div>
+
+            <div class="md:col-span-7 earth-card rounded-3xl p-5 sm:p-7">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-[#43231D]">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#E26D38]/20 text-[#FDBA74] border border-[#E26D38]/40">Software Model Estimate Only</span>
+                  <h3 class="text-lg sm:text-xl font-extrabold mt-1">Estimated Root-Zone Moisture Balance</h3>
+                </div>
+                <span id="soil-balance-status-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-[#120806] text-[#E5C9B0] border border-[#43231D]">Awaiting Field</span>
+              </div>
+
+              <!-- Moisture Progress Bar -->
+              <div class="mb-4">
+                <div class="flex justify-between text-xs font-bold mb-1.5">
+                  <span class="text-[#E5C9B0]">Estimated Available Root-Zone Water</span>
+                  <span id="soil-moisture-pct" class="text-[#F4B740]">--%</span>
+                </div>
+                <div class="w-full h-4 rounded-full bg-[#120806] border border-[#43231D] overflow-hidden p-0.5">
+                  <div id="soil-moisture-bar" class="h-full rounded-full bg-gradient-to-r from-[#E26D38] via-[#F4B740] to-[#68B849] transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-[11px] text-[#C6A88E] mt-1">
+                  <span>Depletion: <strong id="soil-depletion-mm" class="text-[#FFF8EE]">-- mm</strong></span>
+                  <span>Readily Available Threshold (MAD): <strong id="soil-mad-mm" class="text-[#F4B740]">-- mm</strong></span>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-[#E26D38]/10 border border-[#E26D38]/30 text-xs text-[#F7DEC8]">
+                <strong>Transparency Note:</strong> IGRIO uses a 100% software-based water-balance estimate calculated from your field entries, Open-Meteo weather data, and logged irrigations. It does not use physical soil-moisture sensors or automated pumps.
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================= -->
+          <!-- STEP 6: IRRIGATION RECOMMENDATION (MODULE 7)                  -->
+          <!-- ============================================================= -->
+          <div id="step-6" onclick="focusStep(6, false)" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div class="md:col-span-7 order-2 md:order-1 earth-card rounded-3xl p-5 sm:p-7">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-[#43231D]">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F4B740]/15 text-[#F4B740] border border-[#F4B740]/30">Decision &amp; Volume Engine</span>
+                  <h3 class="text-lg sm:text-xl font-extrabold mt-1">Smart Irrigation Recommendation</h3>
+                </div>
+                <span id="rec-action-pill" class="px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-[#120806] text-[#E5C9B0] border border-[#43231D]">
+                  Register a Field
+                </span>
+              </div>
+
+              <!-- Plain-Language Farmer Explanation -->
+              <div id="rec-explanation-box" class="p-4 rounded-2xl earth-recessed border-l-4 border-[#F4B740] mb-4">
+                <p id="rec-headline" class="font-extrabold text-sm sm:text-base text-[#FFF8EE]">No active field selected yet</p>
+                <p id="rec-reason" class="text-xs sm:text-sm text-[#E5C9B0] mt-1 leading-relaxed">
+                  Register a field in Step 2 to generate clear, plain-language irrigation guidance along with daily water need in Litres/day and total event volume in Litres.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="p-3.5 rounded-2xl earth-recessed">
+                  <span class="text-[11px] text-[#C6A88E] font-bold uppercase">Daily Need</span>
+                  <p id="rec-daily-litres" class="text-xl font-black text-[#86EFAC] mt-0.5">0 L/day</p>
+                  <p id="rec-window-text" class="text-[11px] text-[#C6A88E]">Timing: Pending field</p>
+                </div>
+                <div class="p-3.5 rounded-2xl earth-recessed">
+                  <span class="text-[11px] text-[#C6A88E] font-bold uppercase">Gross Event Volume</span>
+                  <p id="rec-gross-litres" class="text-xl font-black text-[#F4B740] mt-0.5">0 L</p>
+                  <p id="rec-depth-mm" class="text-[11px] text-[#C6A88E]">Net depth: 0.0 mm</p>
+                </div>
+                <div class="p-3.5 rounded-2xl earth-recessed">
+                  <span class="text-[11px] text-[#C6A88E] font-bold uppercase">Data Confidence</span>
+                  <p id="rec-confidence" class="text-xl font-black text-sky-300 mt-0.5">Baseline</p>
+                  <p class="text-[11px] text-[#C6A88E]">Weather + Soil Model</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="md:col-span-5 order-1 md:order-2 flex flex-col items-start md:pl-8">
+              <div class="station-signboard rounded-2xl px-5 py-3 inline-block mb-3">
+                <div class="text-[11px] font-black tracking-widest uppercase opacity-80">MODULE 07 • GUIDANCE</div>
+                <div class="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight leading-none mt-0.5">STEP 6: SMART ADVICE</div>
+              </div>
+              <p class="text-xs sm:text-sm text-[#E5C9B0] max-w-xs">
+                Translates crop water use, rainfall forecasts, and soil depletion into plain-language guidance with exact Litres/day and recommended watering windows.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============================================================= -->
+          <!-- STEP 7: FARMER RECORDS IRRIGATION (MODULE 8)                  -->
+          <!-- ============================================================= -->
+          <div id="step-7" onclick="focusStep(7, false)" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div class="md:col-span-5 flex flex-col items-start md:items-end md:pr-8">
+              <div class="station-signboard rounded-2xl px-5 py-3 inline-block mb-3">
+                <div class="text-[11px] font-black tracking-widest uppercase opacity-80">MODULE 08 • LOGBOOK</div>
+                <div class="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight leading-none mt-0.5">STEP 7: RECORD WATER</div>
+              </div>
+              <p class="text-xs sm:text-sm text-[#E5C9B0] md:text-right max-w-xs">
+                Log actual water applied in litres, irrigation method, duration, and notes so your soil water-balance and water-savings history stay accurate.
+              </p>
+            </div>
+
+            <div class="md:col-span-7 earth-card rounded-3xl p-5 sm:p-7">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-[#43231D]">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#68B849]/15 text-[#86EFAC] border border-[#68B849]/30">Manual Irrigation Log</span>
+                  <h3 class="text-lg sm:text-xl font-extrabold mt-1">Record Irrigation Activity</h3>
+                </div>
+                <button type="button" onclick="fillRecommendedLitres()" class="px-3 py-1.5 rounded-xl bg-[#F4B740]/20 hover:bg-[#F4B740]/30 text-[#F4B740] border border-[#F4B740]/40 text-xs font-bold cursor-pointer">
+                  <span data-i18n="fill_recommended">⚡ Fill Recommended Litres</span>
+                </button>
+              </div>
+
+              <form onsubmit="recordIrrigationLog(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="target_field">Target Field</label>
+                  <select id="log-field-select" class="earth-input cursor-pointer"></select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="irrigation_date">Irrigation Date</label>
+                  <input type="date" id="log-date-input" required class="earth-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="water_quantity">Water Quantity Supplied (Litres)</label>
+                  <input type="number" id="log-litres-input" required min="10" step="10" value="5000" class="earth-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="irrigation_method">Irrigation Method</label>
+                  <select id="log-method-select" onchange="recalculateAll()" class="earth-input cursor-pointer">
+                    <option value="drip" data-i18n="method_drip">Drip Irrigation (90% Efficiency)</option>
+                    <option value="sprinkler" data-i18n="method_sprinkler">Sprinkler Irrigation (80% Efficiency)</option>
+                    <option value="furrow" data-i18n="method_furrow">Furrow Irrigation (70% Efficiency)</option>
+                    <option value="basin" data-i18n="method_basin">Basin / Flood Irrigation (60% Efficiency)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="duration">Duration (Minutes)</label>
+                  <input type="number" id="log-duration-input" min="5" step="5" value="90" class="earth-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-[#E5C9B0] mb-1" data-i18n="notes">Notes</label>
+                  <input type="text" id="log-notes-input" class="earth-input" data-i18n-placeholder="notes_placeholder" placeholder="e.g., Morning watering, clear sky" />
+                </div>
+                <div class="sm:col-span-2 pt-1">
+                  <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-[#F4B740] to-[#E26D38] hover:brightness-110 text-[#170B09] font-extrabold text-sm shadow-lg transition cursor-pointer">
+                    <span data-i18n="save_record">Save Irrigation Record &amp; Update Balance</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 3. FARMER DASHBOARD, ALERTS, FIELD ANALYTICS & HISTORY LOGBOOK       -->
+  <!-- ===================================================================== -->
+  <section id="about" class="py-16 sm:py-20 px-4 sm:px-6 bg-[#20100D] border-t border-[#43231D]">
+    <div class="max-w-6xl mx-auto space-y-10">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-extrabold uppercase tracking-widest text-[#F4B740]">MODULES 2, 9 &amp; 10 • FARMER OVERVIEW</span>
+          <h2 class="font-display text-3xl sm:text-5xl font-black uppercase tracking-tight mt-1">
+            Farmer Dashboard &amp; Water Analytics
+          </h2>
+        </div>
+        <p class="text-xs sm:text-sm text-[#E5C9B0] max-w-md">
+          Monitors registered fields, active crops, daily water requirement in Litres/day, smart alerts, field-wise consumption, and recorded irrigation history.
+        </p>
+      </div>
+
+      <!-- Dashboard KPI Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="earth-card rounded-2xl p-4 sm:p-5">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#C6A88E]">Total Daily Water Need</span>
+          <p id="dash-daily-litres" class="text-2xl sm:text-3xl font-black text-[#F4B740] mt-1">0 L/day</p>
+          <p id="dash-active-crops-summary" class="text-xs text-[#E5C9B0] mt-1">0 active crops</p>
+        </div>
+        <div class="earth-card rounded-2xl p-4 sm:p-5">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#C6A88E]">Total Water Logged</span>
+          <p id="dash-total-logged" class="text-2xl sm:text-3xl font-black text-[#FFF8EE] mt-1">0 L</p>
+          <p id="dash-irrigation-count" class="text-xs text-[#E5C9B0] mt-1">0 irrigations recorded</p>
+        </div>
+        <div class="earth-card rounded-2xl p-4 sm:p-5">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#C6A88E]">Est. Water Saved vs Flood</span>
+          <p id="dash-water-saved" class="text-2xl sm:text-3xl font-black text-[#86EFAC] mt-1">0 L</p>
+          <p class="text-xs text-[#C6A88E] mt-1">Modeled efficiency comparison</p>
+        </div>
+        <div class="earth-card rounded-2xl p-4 sm:p-5">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#C6A88E]">Registered Fields</span>
+          <p id="dash-fields-count" class="text-2xl sm:text-3xl font-black text-[#FDBA74] mt-1">0</p>
+          <p class="text-xs text-[#C6A88E] mt-1">Software water-balance active</p>
+        </div>
+      </div>
+
+      <!-- Smart Alerts + Field-Wise Water Usage -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 earth-card rounded-3xl p-5 sm:p-6">
+          <h3 class="text-lg font-extrabold text-[#F4B740] mb-3">🔔 Smart Irrigation Alerts</h3>
+          <div id="smart-alerts-list" class="space-y-2.5 text-xs"></div>
+        </div>
+
+        <div class="lg:col-span-7 earth-card rounded-3xl p-5 sm:p-6">
+          <h3 class="text-lg font-extrabold text-[#FFF8EE] mb-3">📊 Field-Wise Daily &amp; Logged Water Usage</h3>
+          <div id="field-usage-bars" class="space-y-3.5 text-xs"></div>
+        </div>
+      </div>
+
+      <!-- Persistent Irrigation History Logbook Table -->
+      <div class="earth-card rounded-3xl p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <h3 class="text-lg font-extrabold text-[#FFF8EE]">📘 Irrigation History Logbook</h3>
+          <span class="text-xs text-[#C6A88E]">Saved locally in your browser for this account</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="border-b border-[#43231D] text-[#C6A88E] uppercase text-[11px]">
+                <th class="py-2.5 px-3">Date</th>
+                <th class="py-2.5 px-3">Field</th>
+                <th class="py-2.5 px-3">Crop</th>
+                <th class="py-2.5 px-3">Method</th>
+                <th class="py-2.5 px-3">Water Supplied</th>
+                <th class="py-2.5 px-3">Duration</th>
+                <th class="py-2.5 px-3">Notes</th>
+              </tr>
+            </thead>
+            <tbody id="irrigation-history-tbody" class="divide-y divide-[#43231D]/60"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 4. CROP & SOIL DATABASE GUIDE + TRANSPARENCY & FUTURE ML ROADMAP     -->
+  <!-- ===================================================================== -->
+  <section id="crop-guide" class="py-16 sm:py-20 px-4 sm:px-6 bg-[#170B09] border-t border-[#43231D]">
+    <div class="max-w-6xl mx-auto space-y-12">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="text-xs font-extrabold uppercase tracking-widest text-[#F4B740]">MODULES 5, 6 &amp; FUTURE ML FOUNDATION</span>
+        <h2 class="font-display text-3xl sm:text-5xl font-black uppercase tracking-tight mt-1">
+          Crop &amp; Soil Reference Guide
+        </h2>
+        <p class="text-sm text-[#E5C9B0] mt-2">
+          Built on FAO-56 crop coefficients (Kc), root depths, and soil available water capacity (AWC)—with a clear path to future machine-learning models once farm history grows.
+        </p>
+      </div>
+
+      <!-- Crop Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="earth-card rounded-2xl p-5">
+          <div class="text-2xl mb-2">🌾</div>
+          <h3 class="font-extrabold text-base text-[#F4B740]">Rice (Paddy)</h3>
+          <p class="text-xs text-[#C6A88E] mt-0.5">Cereal • Root Depth ~0.50 m</p>
+          <p class="text-xs text-[#E5C9B0] mt-2.5">Kc: Initial 1.00 • Mid 1.20 • Late 0.90. High water sensitivity during active tillering and flowering.</p>
+        </div>
+        <div class="earth-card rounded-2xl p-5">
+          <div class="text-2xl mb-2">🌿</div>
+          <h3 class="font-extrabold text-base text-[#F4B740]">Wheat</h3>
+          <p class="text-xs text-[#C6A88E] mt-0.5">Cereal • Root Depth ~0.90 m</p>
+          <p class="text-xs text-[#E5C9B0] mt-2.5">Kc: Initial 0.40 • Mid 1.15 • Late 0.40. Responds strongly to timely watering at crown-root and grain-fill stages.</p>
+        </div>
+        <div class="earth-card rounded-2xl p-5">
+          <div class="text-2xl mb-2">🌽</div>
+          <h3 class="font-extrabold text-base text-[#F4B740]">Maize (Corn)</h3>
+          <p class="text-xs text-[#C6A88E] mt-0.5">Cereal • Root Depth ~1.00 m</p>
+          <p class="text-xs text-[#E5C9B0] mt-2.5">Kc: Initial 0.35 • Mid 1.20 • Late 0.60. Deep roots buffer short dry spells, but silking stage needs steady moisture.</p>
+        </div>
+        <div class="earth-card rounded-2xl p-5">
+          <div class="text-2xl mb-2">🍅</div>
+          <h3 class="font-extrabold text-base text-[#F4B740]">Tomato</h3>
+          <p class="text-xs text-[#C6A88E] mt-0.5">Horticulture • Root Depth ~0.60 m</p>
+          <p class="text-xs text-[#E5C9B0] mt-2.5">Kc: Initial 0.60 • Mid 1.15 • Late 0.80. Frequent, measured watering supports flowering, fruit set, and even fruit size.</p>
+        </div>
+        <div class="earth-card rounded-2xl p-5">
+          <div class="text-2xl mb-2">🥔</div>
+          <h3 class="font-extrabold text-base text-[#F4B740]">Potato</h3>
+          <p class="text-xs text-[#C6A88E] mt-0.5">Tuber Crop • Root Depth ~0.60 m</p>
+          <p class="text-xs text-[#E5C9B0] mt-2.5">Kc: Initial 0.50 • Mid 1.15 • Late 0.75. Consistent moisture during tuber initiation and bulking helps protect yield and quality.</p>
+        </div>
+      </div>
+
+      <!-- Soil & Software Transparency + Future ML -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="earth-card rounded-3xl p-6 space-y-3">
+          <h3 class="text-lg font-extrabold text-[#F4B740]">🌱 Soil Water-Holding Categories &amp; Zero-Hardware Design</h3>
+          <p class="text-xs sm:text-sm text-[#E5C9B0] leading-relaxed">
+            IGRIO supports <strong>Sandy</strong>, <strong>Loamy</strong>, <strong>Clay</strong>, and <strong>Alluvial</strong> soils with distinct field capacity, wilting point, and available water capacity parameters.
+          </p>
+          <p class="text-xs sm:text-sm text-[#E5C9B0] leading-relaxed">
+            <strong>Software-Only Architecture:</strong> Version 1 requires zero physical soil-moisture sensors, IoT boards, or automated pump controllers. All soil moisture figures are transparent software estimates.
+          </p>
+        </div>
+
+        <div class="earth-card rounded-3xl p-6 space-y-3">
+          <h3 class="text-lg font-extrabold text-[#86EFAC]">📈 Transparent FAO-56 Baseline &amp; Future ML Roadmap</h3>
+          <p class="text-xs sm:text-sm text-[#E5C9B0] leading-relaxed">
+            Recommendations currently use transparent, scientifically grounded FAO-56 evapotranspiration and root-zone water-balance calculations—not an unvalidated black-box model.
+          </p>
+          <p class="text-xs sm:text-sm text-[#E5C9B0] leading-relaxed">
+            Once sufficient historical farm logs and weather records are collected, Python regression models (such as Random Forest or Gradient Boosting) can be trained and validated to refine field-specific schedules.
+          </p>
+        </div>
+      </div>
+
+      <!-- Practical Soil Reference, Irrigation Cautions & Support -->
+      <div class="border-t border-[#43231D] pt-10 space-y-7">
+        <div class="text-center max-w-3xl mx-auto">
+          <span class="text-xs font-extrabold uppercase tracking-widest text-[#86EFAC]">Field Reference for Farmers</span>
+          <h3 class="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight mt-1">Know Your Soil Before You Irrigate</h3>
+          <p class="text-sm text-[#E5C9B0] mt-2">Choose the soil type that most closely matches your field. It changes how quickly water enters, drains, and remains available to crop roots.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <article class="earth-card rounded-2xl p-5">
+            <div class="text-2xl mb-2">🏖️</div>
+            <h4 class="font-extrabold text-base text-[#F4B740]">Sandy Soil</h4>
+            <p class="text-xs text-[#C6A88E] mt-1">Low water holding • Drains very quickly</p>
+            <p class="text-xs text-[#E5C9B0] mt-3 leading-relaxed">Water in smaller amounts more often. Check moisture sooner after hot or windy days; large applications can move below the root zone.</p>
+          </article>
+          <article class="earth-card rounded-2xl p-5">
+            <div class="text-2xl mb-2">🌱</div>
+            <h4 class="font-extrabold text-base text-[#F4B740]">Loamy Soil</h4>
+            <p class="text-xs text-[#C6A88E] mt-1">Balanced water holding • Good drainage</p>
+            <p class="text-xs text-[#E5C9B0] mt-3 leading-relaxed">Usually the most forgiving soil. Follow the recommended volume, then adjust only after checking rainfall, field wetness, and crop stage.</p>
+          </article>
+          <article class="earth-card rounded-2xl p-5">
+            <div class="text-2xl mb-2">🧱</div>
+            <h4 class="font-extrabold text-base text-[#F4B740]">Clay Soil</h4>
+            <p class="text-xs text-[#C6A88E] mt-1">High water holding • Slow drainage</p>
+            <p class="text-xs text-[#E5C9B0] mt-3 leading-relaxed">Irrigate more slowly and allow time for water to soak in. Avoid watering again when the surface is already wet or puddles remain.</p>
+          </article>
+          <article class="earth-card rounded-2xl p-5">
+            <div class="text-2xl mb-2">🏞️</div>
+            <h4 class="font-extrabold text-base text-[#F4B740]">Alluvial Soil</h4>
+            <p class="text-xs text-[#C6A88E] mt-1">Fertile, layered soil • Moderate to high water holding</p>
+            <p class="text-xs text-[#E5C9B0] mt-3 leading-relaxed">Check different parts of the plot, because river-basin soils can vary. Use measured applications and account for recent rain before pumping.</p>
+          </article>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <article class="rounded-3xl p-6 bg-[#68B849]/10 border border-[#68B849]/35">
+            <h3 class="text-lg font-extrabold text-[#86EFAC]">✅ When Irrigation Is Usually Helpful</h3>
+            <ul class="mt-3 space-y-2 text-xs sm:text-sm text-[#E5C9B0] leading-relaxed list-disc pl-5">
+              <li>Water early morning or near sunset to reduce evaporation and wind drift.</li>
+              <li>Prioritise seedling establishment, flowering, fruit set, tuber bulking, and grain filling when the crop is sensitive to water stress.</li>
+              <li>Use the IGRIO recommendation after checking field moisture by hand and reviewing the rainfall forecast.</li>
+              <li>Apply water slowly enough for it to enter the root zone without running off the field.</li>
+            </ul>
+          </article>
+          <article class="rounded-3xl p-6 bg-[#E26D38]/10 border border-[#E26D38]/40">
+            <h3 class="text-lg font-extrabold text-[#FDBA74]">⚠️ When to Delay or Avoid Irrigation</h3>
+            <ul class="mt-3 space-y-2 text-xs sm:text-sm text-[#E5C9B0] leading-relaxed list-disc pl-5">
+              <li>Delay if meaningful rain is expected soon or rain has already left the soil wet.</li>
+              <li>Do not irrigate waterlogged fields, standing-water areas, or plots with runoff; excess water can reduce root oxygen and nutrient uptake.</li>
+              <li>Avoid midday watering in hot, windy conditions unless it is necessary to prevent severe crop stress.</li>
+              <li>Pause and inspect leaks, broken sprinklers, or blocked drippers before running the system again.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div id="contact" class="earth-card rounded-3xl p-6 sm:p-7 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-6 items-center">
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-widest text-[#F4B740]">Need Help?</span>
+            <h3 class="font-display text-3xl font-black uppercase tracking-tight mt-1">Farmer Support &amp; Contact</h3>
+            <p class="text-sm text-[#E5C9B0] mt-2 leading-relaxed">For help with field setup, crop stage selection, water calculations, or irrigation records, write to our support team. Include your field name, crop, soil type, and a short description of the issue so we can guide you faster.</p>
+          </div>
+          <div class="rounded-2xl earth-recessed p-5 space-y-3 text-sm">
+            <p><span class="text-[#C6A88E]">Email</span><br><a href="mailto:support@igrio-irrigation.org" class="font-bold text-[#F4B740] hover:text-[#FDE047]">support@igrio-irrigation.org</a></p>
+            <p><span class="text-[#C6A88E]">Recommended support hours</span><br><strong class="text-[#FFF8EE]">Monday–Saturday, 9:00 AM–6:00 PM IST</strong></p>
+            <p class="text-xs text-[#C6A88E]">For urgent field damage, contact your local agriculture extension officer or irrigation technician first.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 5. FARMER COMMUNITY, CONTACT HELPDESK & FOOTER                        -->
+  <!-- ===================================================================== -->
+  <section id="community" class="py-14 px-4 sm:px-6 bg-[#20100D] border-t border-[#43231D]">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="earth-card rounded-2xl p-5">
+        <h3 class="font-extrabold text-base text-[#F4B740]">👨‍🌾 Farmer Advisory Circle</h3>
+        <p class="text-xs text-[#E5C9B0] mt-2 leading-relaxed">
+          Share practical watering notes, seasonal crop calendars, and rainfall observations with fellow growers in your district.
+        </p>
+      </div>
+      <div class="earth-card rounded-2xl p-5">
+        <h3 class="font-extrabold text-base text-[#F4B740]">🌧️ Rain-Aware Water Saving</h3>
+        <p class="text-xs text-[#E5C9B0] mt-2 leading-relaxed">
+          Check the 5-day forecast and rain slider before running pumps so expected rainfall helps replenish root-zone moisture naturally.
+        </p>
+      </div>
+      <button type="button" onclick="focusStep(1)" class="earth-card rounded-2xl p-5 text-left group cursor-pointer hover:-translate-y-1" aria-label="Go to farmer registration">
+        <div class="flex items-center gap-3">
+          <span class="w-12 h-12 rounded-full bg-[#68B849]/15 border border-[#68B849]/40 flex items-center justify-center text-2xl">👨‍🌾</span>
+          <div>
+            <h3 class="font-extrabold text-base text-[#F4B740] group-hover:text-[#FDE047]">Farmer Registration</h3>
+            <p class="text-xs text-[#E5C9B0] mt-1 leading-relaxed">Create your farmer account and begin adding fields, crops, and irrigation records.</p>
+          </div>
+        </div>
+        <span class="inline-block mt-3 text-xs font-extrabold text-[#86EFAC]">Register as a Farmer →</span>
+      </button>
+    </div>
+  </section>
+
+  <footer class="bg-[#120806] border-t border-[#43231D] py-8 px-4 sm:px-6 text-center text-xs text-[#C6A88E]">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <img src="igrio-logo-illustration.jpeg" alt="" class="igrio-logo-image w-24" />
+        <svg viewBox="0 0 240 94" class="igrio-legacy-logo w-24 h-auto" aria-hidden="true">
+          <path d="M 38 34 C 16 32, 8 16, 14 7 C 27 8, 38 19, 38 34 Z" fill="#68B849" stroke="#120806" stroke-width="2.5" />
+          <path d="M 41 32 C 34 15, 42 4, 54 4 C 57 16, 51 27, 41 32 Z" fill="#68B849" stroke="#120806" stroke-width="2.5" />
+          <path d="M 206 34 C 212 18, 224 12, 232 16 C 231 27, 221 34, 206 34 Z" fill="#68B849" stroke="#120806" stroke-width="2.2" />
+          <path d="M 148 6 C 148 6, 137 20, 137 28 C 137 34.5, 142 39, 148 39 C 154 39, 159 34.5, 159 28 C 159 20, 148 6, 148 6 Z" fill="#0EA5E9" stroke="#120806" stroke-width="2.4" />
+          <text x="122" y="79" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="64" letter-spacing="2" fill="#F4B740" stroke="#120806" stroke-width="5" paint-order="stroke fill">IGRIO</text>
+        </svg>
+        <span>IGRIO Smart Irrigation Scheduling &amp; Water Management</span>
+      </div>
+      <div class="text-center sm:text-right space-y-1">
+        <p>Software-Based FAO-56 Water Scheduling • No Physical Sensors or Hardware Required</p>
+        <p>© 2026 IGRIO Smart Irrigation. All rights reserved. • Farmer guidance only; verify field conditions before irrigating.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT: STATE, AUTH, CROPS, OPEN-METEO, FAO-56 & S-CURVE SCROLL  -->
+  <!-- ===================================================================== -->
+  <script>
+    // -----------------------------------------------------------------------
+    // 1. SCIENTIFIC CROP & SOIL DATABASES (FAO-56 & SOFTWARE WATER BALANCE)
+    // -----------------------------------------------------------------------
+    const CROP_DB = {
+      rice: {
+        id: 'rice',
+        name: 'Rice (Paddy)',
+        shortName: 'Rice',
+        category: 'Cereal Crop',
+        rootDepthM: 0.50,
+        mad: 0.45,
+        kc: { initial: 1.00, mid: 1.20, late: 0.90 },
+        accent: '#68B849'
+      },
+      wheat: {
+        id: 'wheat',
+        name: 'Wheat',
+        shortName: 'Wheat',
+        category: 'Cereal Crop',
+        rootDepthM: 0.90,
+        mad: 0.55,
+        kc: { initial: 0.40, mid: 1.15, late: 0.40 },
+        accent: '#F4B740'
+      },
+      maize: {
+        id: 'maize',
+        name: 'Maize (Corn)',
+        shortName: 'Maize',
+        category: 'Cereal Crop',
+        rootDepthM: 1.00,
+        mad: 0.55,
+        kc: { initial: 0.35, mid: 1.20, late: 0.60 },
+        accent: '#E26D38'
+      },
+      tomato: {
+        id: 'tomato',
+        name: 'Tomato',
+        shortName: 'Tomato',
+        category: 'Horticulture',
+        rootDepthM: 0.60,
+        mad: 0.45,
+        kc: { initial: 0.60, mid: 1.15, late: 0.80 },
+        accent: '#EF4444'
+      },
+      potato: {
+        id: 'potato',
+        name: 'Potato',
+        shortName: 'Potato',
+        category: 'Tuber Crop',
+        rootDepthM: 0.60,
+        mad: 0.40,
+        kc: { initial: 0.50, mid: 1.15, late: 0.75 },
+        accent: '#D97706'
+      }
+    };
+
+    const SOIL_DB = {
+      alluvial: { id: 'alluvial', name: 'Alluvial Soil', awcMmPerM: 165 },
+      loamy: { id: 'loamy', name: 'Loamy Soil', awcMmPerM: 150 },
+      clay: { id: 'clay', name: 'Clay Soil', awcMmPerM: 175 },
+      sandy: { id: 'sandy', name: 'Sandy Soil', awcMmPerM: 75 }
+    };
+
+    const METHOD_EFFICIENCY = {
+      drip: 0.90,
+      sprinkler: 0.80,
+      furrow: 0.70,
+      basin: 0.60
+    };
+
+    const STORAGE_KEY = 'igrio_farmer_workspace_v1';
+
+    // Form-only translations: branding, navigation, and landing-page messaging remain in English.
+    const FARMER_FORM_TRANSLATIONS = {
+      bn: {
+        form_language: 'কৃষক ফর্মের ভাষা', full_name: 'পুরো নাম', full_name_placeholder: 'আপনার পুরো নাম লিখুন',
+        contact: 'মোবাইল নম্বর বা ইমেল', contact_example: 'যেমন, +91 98XXX XXXXX বা farmer@example.com', contact_short: 'মোবাইল বা ইমেল লিখুন',
+        password: 'পাসওয়ার্ড', password_create: 'একটি পাসওয়ার্ড তৈরি করুন', password_create_short: 'পাসওয়ার্ড তৈরি করুন',
+        village_district: 'গ্রাম / জেলার অবস্থান', create_start: 'অ্যাকাউন্ট তৈরি করুন এবং ক্ষেত যোগ করা শুরু করুন →',
+        field_name: 'ক্ষেতের নাম', field_name_placeholder: 'যেমন, প্লট A, নদীর পাড়ের ক্ষেত',
+        field_location: 'ক্ষেতের অবস্থান / চিহ্ন', field_location_placeholder: 'যেমন, গ্রামের খালের কাছে / ব্লক ২',
+        field_area: 'ক্ষেতের আয়তন (m²)', soil_type: 'মাটির ধরন', crop_type: 'ফসলের ধরন', planting_date: 'রোপণের তারিখ',
+        growth_stage: 'ফসলের বর্তমান বৃদ্ধির ধাপ', add_field: '+ ক্ষেত যোগ করুন এবং ফসল নিবন্ধন করুন',
+        soil_alluvial: 'পলিমাটি (AWC 165 mm/m)', soil_loamy: 'দোআঁশ মাটি (AWC 150 mm/m)', soil_clay: 'এঁটেল মাটি (AWC 175 mm/m)', soil_sandy: 'বালুমাটি (AWC 75 mm/m)',
+        crop_rice: 'ধান', crop_wheat: 'গম', crop_maize: 'ভুট্টা', crop_tomato: 'টমেটো', crop_potato: 'আলু',
+        stage_initial: 'প্রাথমিক / চারা ধাপ', stage_mid: 'মধ্য-মৌসুম / সক্রিয় বৃদ্ধি (সর্বোচ্চ জল)', stage_late: 'শেষ মৌসুম / পাকা ও ফসল তোলা',
+        target_field: 'নির্বাচিত ক্ষেত', irrigation_date: 'সেচের তারিখ', water_quantity: 'দেওয়া জলের পরিমাণ (লিটার)',
+        irrigation_method: 'সেচের পদ্ধতি', method_drip: 'ড্রিপ সেচ (৯০% দক্ষতা)', method_sprinkler: 'স্প্রিঙ্কলার সেচ (৮০% দক্ষতা)',
+        method_furrow: 'নালা সেচ (৭০% দক্ষতা)', method_basin: 'বেসিন / প্লাবন সেচ (৬০% দক্ষতা)',
+        duration: 'সময়কাল (মিনিট)', notes: 'মন্তব্য', notes_placeholder: 'যেমন, সকালে সেচ, আকাশ পরিষ্কার',
+        fill_recommended: '⚡ প্রস্তাবিত লিটার পূরণ করুন', save_record: 'সেচের রেকর্ড সংরক্ষণ করুন এবং হিসাব আপডেট করুন'
+      },
+      hi: {
+        form_language: 'किसान फॉर्म की भाषा', full_name: 'पूरा नाम', full_name_placeholder: 'अपना पूरा नाम लिखें',
+        contact: 'मोबाइल नंबर या ईमेल', contact_example: 'जैसे, +91 98XXX XXXXX या farmer@example.com', contact_short: 'मोबाइल या ईमेल लिखें',
+        password: 'पासवर्ड', password_create: 'पासवर्ड बनाएं', password_create_short: 'पासवर्ड बनाएं',
+        village_district: 'गाँव / ज़िला स्थान', create_start: 'खाता बनाएं और खेत जोड़ना शुरू करें →',
+        field_name: 'खेत का नाम', field_name_placeholder: 'जैसे, प्लॉट A, नदी किनारे का खेत',
+        field_location: 'खेत का स्थान / पहचान', field_location_placeholder: 'जैसे, गाँव की नहर के पास / ब्लॉक 2',
+        field_area: 'खेत का क्षेत्रफल (m²)', soil_type: 'मिट्टी का प्रकार', crop_type: 'फसल का प्रकार', planting_date: 'रोपाई की तारीख',
+        growth_stage: 'फसल की वर्तमान वृद्धि अवस्था', add_field: '+ खेत जोड़ें और फसल पंजीकृत करें',
+        soil_alluvial: 'जलोढ़ मिट्टी (AWC 165 mm/m)', soil_loamy: 'दोमट मिट्टी (AWC 150 mm/m)', soil_clay: 'चिकनी मिट्टी (AWC 175 mm/m)', soil_sandy: 'रेतीली मिट्टी (AWC 75 mm/m)',
+        crop_rice: 'धान', crop_wheat: 'गेहूँ', crop_maize: 'मक्का', crop_tomato: 'टमाटर', crop_potato: 'आलू',
+        stage_initial: 'प्रारंभिक / पौध अवस्था', stage_mid: 'मध्य मौसम / सक्रिय वृद्धि (अधिकतम पानी)', stage_late: 'अंतिम मौसम / पकना और कटाई',
+        target_field: 'चुना हुआ खेत', irrigation_date: 'सिंचाई की तारीख', water_quantity: 'दी गई पानी की मात्रा (लीटर)',
+        irrigation_method: 'सिंचाई की विधि', method_drip: 'ड्रिप सिंचाई (90% दक्षता)', method_sprinkler: 'स्प्रिंकलर सिंचाई (80% दक्षता)',
+        method_furrow: 'क्यारी सिंचाई (70% दक्षता)', method_basin: 'बेसिन / बाढ़ सिंचाई (60% दक्षता)',
+        duration: 'अवधि (मिनट)', notes: 'टिप्पणियाँ', notes_placeholder: 'जैसे, सुबह सिंचाई, साफ आकाश',
+        fill_recommended: '⚡ सुझाए गए लीटर भरें', save_record: 'सिंचाई रिकॉर्ड सहेजें और संतुलन अपडेट करें'
+      }
+    };
+
+    // Fresh New-Member Default State: Logged out, 0 pre-filled fields, 0 crops
+    function createDefaultState() {
+      return {
+        currentUser: null,
+        accounts: [],
+        fields: [],
+        irrigationLogs: [],
+        selectedFieldId: null,
+        selectedCropFilter: null,
+        farmerLanguage: 'en',
+        rainSliderMm: 0,
+        et0Override: null
+      };
+    }
+
+    let appState = loadAppState();
+
+    let weatherData = {
+      locationLabel: 'Bardhaman Alluvial Belt, West Bengal',
+      lat: 23.2324,
+      lon: 87.8615,
+      temp: 31.4,
+      tempMin: 23.5,
+      tempMax: 34.2,
+      humidity: 66,
+      windSpeed: 11.2,
+      solarRadiation: 19.4,
+      rainfallToday: 0.0,
+      forecastRain48h: 0.0,
+      et0: 4.8,
+      source: 'Open-Meteo Ready',
+      daily: []
+    };
+
+    let latestCalcSummary = {
+      totalDailyLitres: 0,
+      selectedDailyLitres: 0,
+      recommendedGrossLitres: 0,
+      recommendedNetMm: 0,
+      totalWaterSavedLitres: 0
+    };
+
+    function loadAppState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return createDefaultState();
+        const parsed = JSON.parse(raw);
+        const migrateLegacyVegetables = (item) => item?.cropType === 'vegetables'
+          ? { ...item, cropType: 'tomato' }
+          : item;
+        return {
+          ...createDefaultState(),
+          ...parsed,
+          fields: Array.isArray(parsed.fields) ? parsed.fields.map(migrateLegacyVegetables) : [],
+          irrigationLogs: Array.isArray(parsed.irrigationLogs) ? parsed.irrigationLogs.map(migrateLegacyVegetables) : [],
+          accounts: Array.isArray(parsed.accounts) ? parsed.accounts : [],
+          selectedCropFilter: parsed.selectedCropFilter === 'vegetables' ? 'tomato' : parsed.selectedCropFilter
+        };
+      } catch (err) {
+        console.warn('Could not read saved IGRIO state:', err);
+        return createDefaultState();
+      }
+    }
+
+    function saveAppState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (err) {
+        console.warn('Could not persist IGRIO state:', err);
+      }
+    }
+
+    function applyFarmerLanguage() {
+      const language = appState.farmerLanguage || 'en';
+      const dictionary = FARMER_FORM_TRANSLATIONS[language] || {};
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (!el.dataset.i18nDefault) el.dataset.i18nDefault = el.textContent;
+        el.textContent = dictionary[key] || el.dataset.i18nDefault;
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        if (!el.dataset.i18nDefaultPlaceholder) el.dataset.i18nDefaultPlaceholder = el.placeholder;
+        el.placeholder = dictionary[key] || el.dataset.i18nDefaultPlaceholder;
+      });
+      document.querySelectorAll('[data-farmer-language]').forEach(button => {
+        const isActive = button.dataset.farmerLanguage === language;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+      });
+      document.documentElement.lang = language === 'bn' ? 'bn' : language === 'hi' ? 'hi' : 'en';
+    }
+
+    function setFarmerLanguage(language) {
+      appState.farmerLanguage = ['en', 'bn', 'hi'].includes(language) ? language : 'en';
+      saveAppState();
+      applyFarmerLanguage();
+    }
+
+    // -----------------------------------------------------------------------
+    // 2. TOAST & AUTHENTICATION (NEW FARMER REGISTRATION & LOGIN)
+    // -----------------------------------------------------------------------
+    let toastTimer = null;
+    function showToast(title, message, type = 'info') {
+      const toast = document.getElementById('igrio-toast');
+      const box = document.getElementById('igrio-toast-box');
+      const icon = document.getElementById('igrio-toast-icon');
+      const titleEl = document.getElementById('igrio-toast-title');
+      const msgEl = document.getElementById('igrio-toast-msg');
+
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+
+      if (type === 'success') {
+        box.style.borderColor = '#68B849';
+        icon.textContent = '✅';
+      } else if (type === 'warn') {
+        box.style.borderColor = '#E26D38';
+        icon.textContent = '⚠️';
+      } else {
+        box.style.borderColor = '#F4B740';
+        icon.textContent = '🌾';
+      }
+
+      toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 4200);
+    }
+
+    function hideToast() {
+      const toast = document.getElementById('igrio-toast');
+      toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+      toast.classList.remove('translate-y-0', 'opacity-100');
+    }
+
+    function openAuthModal(mode = 'register') {
+      switchAuthMode(mode);
+      document.getElementById('auth-modal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+    }
+
+    function switchAuthMode(mode) {
+      const regTab = document.getElementById('modal-tab-register');
+      const loginTab = document.getElementById('modal-tab-login');
+      const regForm = document.getElementById('modal-register-form');
+      const loginForm = document.getElementById('modal-login-form');
+
+      if (mode === 'login') {
+        loginTab.className = 'py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-[#F4B740] text-[#170B09] shadow cursor-pointer transition';
+        regTab.className = 'py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider text-[#E5C9B0] hover:text-white cursor-pointer transition';
+        loginForm.classList.remove('hidden');
+        regForm.classList.add('hidden');
+      } else {
+        regTab.className = 'py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-[#F4B740] text-[#170B09] shadow cursor-pointer transition';
+        loginTab.className = 'py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider text-[#E5C9B0] hover:text-white cursor-pointer transition';
+        regForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+      }
+    }
+
+    function completeFarmerSession(userObj, isNewAccount) {
+      appState.currentUser = userObj;
+      saveAppState();
+      closeAuthModal();
+      syncAuthUI();
+      fetchWeatherData(true, userObj.lat, userObj.lon);
+      recalculateAll();
+      showToast(
+        isNewAccount ? 'Farmer Account Created' : 'Signed In to IGRIO',
+        `Welcome, ${userObj.name}. You can now add your fields and crops in Step 2.`,
+        'success'
+      );
+    }
+
+    function handleRegisterSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('modal-reg-name').value.trim();
+      const contact = document.getElementById('modal-reg-contact').value.trim();
+      const password = document.getElementById('modal-reg-password').value;
+      const regionVal = document.getElementById('modal-reg-region').value;
+      if (!name || !contact || !password) return;
+
+      const [latStr, lonStr, ...locParts] = regionVal.split(',');
+      const userObj = {
+        id: 'farmer_' + Date.now(),
+        name,
+        contact,
+        location: locParts.join(',').trim(),
+        lat: parseFloat(latStr),
+        lon: parseFloat(lonStr)
+      };
+      appState.accounts.push({ ...userObj, password });
+      completeFarmerSession(userObj, true);
+    }
+
+    function handleInlineRegisterSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('step1-name').value.trim();
+      const contact = document.getElementById('step1-contact').value.trim();
+      const password = document.getElementById('step1-password').value;
+      const regionVal = document.getElementById('step1-region').value;
+      if (!name || !contact || !password) return;
+
+      const [latStr, lonStr, ...locParts] = regionVal.split(',');
+      const userObj = {
+        id: 'farmer_' + Date.now(),
+        name,
+        contact,
+        location: locParts.join(',').trim(),
+        lat: parseFloat(latStr),
+        lon: parseFloat(lonStr)
+      };
+      appState.accounts.push({ ...userObj, password });
+      completeFarmerSession(userObj, true);
+    }
+
+    function handleLoginSubmit(event) {
+      event.preventDefault();
+      const contact = document.getElementById('modal-login-contact').value.trim();
+      const password = document.getElementById('modal-login-password').value;
+      if (!contact || !password) return;
+
+      const matched = appState.accounts.find(
+        acc => acc.contact.toLowerCase() === contact.toLowerCase() && acc.password === password
+      );
+
+      if (matched) {
+        completeFarmerSession(
+          {
+            id: matched.id,
+            name: matched.name,
+            contact: matched.contact,
+            location: matched.location,
+            lat: matched.lat,
+            lon: matched.lon
+          },
+          false
+        );
+      } else {
+        // Allow sign-in for a freshly entered account if no prior password record exists
+        const fallbackName = contact.includes('@') ? contact.split('@')[0] : `Farmer (${contact.slice(-4)})`;
+        const userObj = {
+          id: 'farmer_' + Date.now(),
+          name: fallbackName,
+          contact,
+          location: 'Bardhaman Alluvial Belt, West Bengal',
+          lat: 23.2324,
+          lon: 87.8615
+        };
+        appState.accounts.push({ ...userObj, password });
+        completeFarmerSession(userObj, false);
+      }
+    }
+
+    function logoutFarmer() {
+      appState.currentUser = null;
+      appState.selectedFieldId = null;
+      appState.selectedCropFilter = null;
+      saveAppState();
+      syncAuthUI();
+      recalculateAll();
+      showToast('Logged Out', 'Your session is now logged out. Sign in anytime to manage your fields.', 'info');
+    }
+
+    function syncAuthUI() {
+      const isLoggedIn = Boolean(appState.currentUser);
+
+      document.getElementById('hero-login-btn').classList.toggle('hidden', isLoggedIn);
+      document.getElementById('hero-logged-box').classList.toggle('hidden', !isLoggedIn);
+      document.getElementById('hero-logged-box').classList.toggle('flex', isLoggedIn);
+
+      document.getElementById('sticky-login-btn').classList.toggle('hidden', isLoggedIn);
+      document.getElementById('sticky-logged-box').classList.toggle('hidden', !isLoggedIn);
+      document.getElementById('sticky-logged-box').classList.toggle('flex', isLoggedIn);
+
+      document.getElementById('step1-logged-out-box').classList.toggle('hidden', isLoggedIn);
+      document.getElementById('step1-logged-in-box').classList.toggle('hidden', !isLoggedIn);
+      document.getElementById('step2-login-prompt').classList.toggle('hidden', isLoggedIn);
+
+      const addForm = document.getElementById('add-field-form');
+      Array.from(addForm.querySelectorAll('input, select, button')).forEach(el => {
+        el.disabled = !isLoggedIn;
+      });
+      addForm.classList.toggle('opacity-50', !isLoggedIn);
+
+      const badge = document.getElementById('step1-auth-badge');
+      if (isLoggedIn) {
+        const u = appState.currentUser;
+        document.getElementById('hero-farmer-name').textContent = u.name;
+        document.getElementById('sticky-farmer-name').textContent = u.name;
+        document.getElementById('profile-name-display').textContent = u.name;
+        document.getElementById('profile-contact-display').textContent = u.contact;
+        document.getElementById('profile-location-display').textContent = u.location;
+        document.getElementById('profile-coords-display').textContent = `Lat ${Number(u.lat).toFixed(4)}°, Lon ${Number(u.lon).toFixed(4)}°`;
+        badge.textContent = '● Signed In';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-[#68B849]/20 text-[#86EFAC] border border-[#68B849]/40';
+      } else {
+        badge.textContent = '● Logged Out (New Visitor)';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-[#120806] text-[#E5C9B0] border border-[#43231D]';
+      }
+    }
+
+    function handleRegisterStartClick() {
+      if (!appState.currentUser) {
+        openAuthModal('register');
+      } else {
+        focusStep(2, true);
+      }
+    }
+
+    function previewRegionWeather(regionVal) {
+      if (!appState.currentUser) {
+        const [latStr, lonStr] = regionVal.split(',');
+        fetchWeatherData(false, parseFloat(latStr), parseFloat(lonStr));
+      }
+    }
+
+    function useDeviceGPS() {
+      if (!navigator.geolocation) {
+        showToast('GPS Unavailable', 'Your browser does not support geolocation. Using selected village location.', 'warn');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = Number(pos.coords.latitude.toFixed(4));
+          const lon = Number(pos.coords.longitude.toFixed(4));
+          if (appState.currentUser) {
+            appState.currentUser.lat = lat;
+            appState.currentUser.lon = lon;
+            appState.currentUser.location = `GPS Field (${lat}, ${lon})`;
+            saveAppState();
+            syncAuthUI();
+          }
+          fetchWeatherData(true, lat, lon);
+          showToast('GPS Coordinates Updated', `Fetched weather for ${lat}°, ${lon}°`, 'success');
+        },
+        () => {
+          showToast('Location Permission Not Granted', 'Using your selected district coordinates.', 'info');
+        }
+      );
+    }
+
+    // -----------------------------------------------------------------------
+    // 3. FIELD & CROP MANAGEMENT (ZERO PRE-FILLED FIELDS FOR NEW MEMBERS)
+    // -----------------------------------------------------------------------
+    function updateAreaHelper(areaVal) {
+      const m2 = parseFloat(areaVal) || 0;
+      const acres = (m2 / 4046.86).toFixed(2);
+      document.getElementById('area-helper-text').textContent = `≈ ${acres} Acres`;
+    }
+
+    function addNewField(event) {
+      event.preventDefault();
+      if (!appState.currentUser) {
+        openAuthModal('register');
+        return;
+      }
+
+      const name = document.getElementById('new-field-name').value.trim();
+      const location = document.getElementById('new-field-location').value.trim() || appState.currentUser.location;
+      const areaM2 = Math.max(50, parseFloat(document.getElementById('new-field-area').value) || 4047);
+      const soilType = document.getElementById('new-field-soil').value;
+      const cropType = document.getElementById('new-field-crop').value;
+      const plantingDate = document.getElementById('new-field-date').value || new Date().toISOString().split('T')[0];
+      const growthStage = document.getElementById('new-field-stage').value;
+
+      if (!name) return;
+
+      const newField = {
+        id: 'fld_' + Date.now(),
+        ownerId: appState.currentUser.id,
+        name,
+        location,
+        areaM2,
+        soilType,
+        cropType,
+        plantingDate,
+        growthStage,
+        lastIrrigationDate: null
+      };
+
+      appState.fields.push(newField);
+      appState.selectedFieldId = newField.id;
+      appState.selectedCropFilter = cropType;
+      saveAppState();
+
+      document.getElementById('new-field-name').value = '';
+      document.getElementById('new-field-location').value = '';
+      recalculateAll();
+      showToast('Field & Crop Registered', `Added "${name}" (${CROP_DB[cropType].name}).`, 'success');
+    }
+
+    function selectField(fieldId) {
+      appState.selectedFieldId = fieldId;
+      const fld = appState.fields.find(f => f.id === fieldId);
+      if (fld) appState.selectedCropFilter = fld.cropType;
+      saveAppState();
+      recalculateAll();
+    }
+
+    function updateFieldGrowthStage(fieldId, newStage) {
+      const fld = appState.fields.find(f => f.id === fieldId);
+      if (!fld) return;
+      fld.growthStage = newStage;
+      saveAppState();
+      recalculateAll();
+      showToast('Growth Stage Updated', `${fld.name} set to ${newStage} stage.`, 'info');
+    }
+
+    function deleteField(fieldId) {
+      appState.fields = appState.fields.filter(f => f.id !== fieldId);
+      if (appState.selectedFieldId === fieldId) {
+        appState.selectedFieldId = appState.fields.length ? appState.fields[0].id : null;
+      }
+      if (!appState.fields.some(f => f.cropType === appState.selectedCropFilter)) {
+        appState.selectedCropFilter = appState.fields.length ? appState.fields[0].cropType : null;
+      }
+      saveAppState();
+      recalculateAll();
+      showToast('Field Removed', 'Field deleted from your account.', 'info');
+    }
+
+    function getUserFields() {
+      if (!appState.currentUser) return [];
+      return appState.fields.filter(f => f.ownerId === appState.currentUser.id);
+    }
+
+    function getUserLogs() {
+      if (!appState.currentUser) return [];
+      return appState.irrigationLogs.filter(l => l.ownerId === appState.currentUser.id);
+    }
+
+    function renderFieldsList(userFields, perFieldMetrics) {
+      const container = document.getElementById('registered-fields-list');
+      const logFieldSelect = document.getElementById('log-field-select');
+      document.getElementById('field-count-badge').textContent = `${userFields.length} ${userFields.length === 1 ? 'Field' : 'Fields'} Registered`;
+
+      if (!appState.currentUser) {
+        container.innerHTML = '';
+        logFieldSelect.innerHTML = '<option value="">Sign in and register a field first</option>';
+        return;
+      }
+
+      if (userFields.length === 0) {
+        container.innerHTML = `
+          <div class="p-4 rounded-2xl earth-recessed text-xs text-[#E5C9B0] text-center">
+            No fields added yet for <strong>${escapeHtml(appState.currentUser.name)}</strong>. Use the form above to register your first plot.
+          </div>
+        `;
+        logFieldSelect.innerHTML = '<option value="">Register a field above to log water</option>';
+        return;
+      }
+
+      container.innerHTML = userFields.map(fld => {
+        const crop = CROP_DB[fld.cropType] || CROP_DB.rice;
+        const soil = SOIL_DB[fld.soilType] || SOIL_DB.loamy;
+        const m = perFieldMetrics.get(fld.id) || { dailyLitres: 0, etcMm: 0 };
+        const isSelected = fld.id === appState.selectedFieldId;
+
+        return `
+          <div onclick="selectField('${fld.id}')" class="p-3.5 rounded-2xl cursor-pointer transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${isSelected ? 'bg-[#3A1E18] border-2 border-[#F4B740]' : 'earth-recessed hover:border-[#F4B740]/50'}">
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="font-extrabold text-sm text-[#FFF8EE]">${escapeHtml(fld.name)}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#F4B740]/20 text-[#F4B740]">${crop.name}</span>
+                <span class="text-[11px] text-[#C6A88E]">${escapeHtml(fld.location)}</span>
+              </div>
+              <div class="text-xs text-[#E5C9B0] mt-1">
+                ${Number(fld.areaM2).toLocaleString()} m² (${(fld.areaM2 / 4046.86).toFixed(2)} ac) • ${soil.name} •
+                <strong class="text-[#86EFAC]">${Math.round(m.dailyLitres).toLocaleString()} L/day</strong>
+              </div>
+            </div>
+            <div class="flex items-center gap-2" onclick="event.stopPropagation()">
+              <select aria-label="Change growth stage" onchange="updateFieldGrowthStage('${fld.id}', this.value)" class="px-2 py-1 rounded-lg bg-[#20100D] border border-[#4A2720] text-xs font-bold text-[#F4B740] cursor-pointer">
+                <option value="initial" ${fld.growthStage === 'initial' ? 'selected' : ''}>Initial</option>
+                <option value="mid" ${fld.growthStage === 'mid' ? 'selected' : ''}>Mid-Season</option>
+                <option value="late" ${fld.growthStage === 'late' ? 'selected' : ''}>Late</option>
+              </select>
+              <button type="button" onclick="deleteField('${fld.id}')" title="Delete field" class="px-2.5 py-1 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-200 text-xs font-bold cursor-pointer">
+                ✕
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      logFieldSelect.innerHTML = userFields.map(fld => {
+        const crop = CROP_DB[fld.cropType] || CROP_DB.rice;
+        return `<option value="${fld.id}" ${fld.id === appState.selectedFieldId ? 'selected' : ''}>${escapeHtml(fld.name)} (${crop.name})</option>`;
+      }).join('');
+    }
+
+    // -----------------------------------------------------------------------
+    // 4. CIRCULAR CROP SELECTOR MEDALLIONS (SHOWS LITRES / DAY PER CROP)
+    // -----------------------------------------------------------------------
+    function getCropArtworkSvg(cropId) {
+      if (cropId === 'rice') {
+        return `<svg viewBox="0 0 64 64" class="w-11 h-11" aria-hidden="true">
+          <path d="M 32 54 C 31 38, 28 24, 22 12" stroke="#F4B740" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <path d="M 32 54 C 33 38, 36 24, 42 12" stroke="#F4B740" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <ellipse cx="25" cy="21" rx="3" ry="6" transform="rotate(-25 25 21)" fill="#86EFAC"/>
+          <ellipse cx="39" cy="21" rx="3" ry="6" transform="rotate(25 39 21)" fill="#86EFAC"/>
+          <ellipse cx="27" cy="31" rx="3" ry="6" transform="rotate(-20 27 31)" fill="#68B849"/>
+          <ellipse cx="37" cy="31" rx="3" ry="6" transform="rotate(20 37 31)" fill="#68B849"/>
+        </svg>`;
+      }
+      if (cropId === 'wheat') {
+        return `<svg viewBox="0 0 64 64" class="w-11 h-11" aria-hidden="true">
+          <path d="M 32 55 L 32 11" stroke="#F4B740" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="27" cy="18" rx="3.5" ry="6.5" transform="rotate(-25 27 18)" fill="#FDE047"/>
+          <ellipse cx="37" cy="18" rx="3.5" ry="6.5" transform="rotate(25 37 18)" fill="#FDE047"/>
+          <ellipse cx="27" cy="29" rx="3.5" ry="6.5" transform="rotate(-25 27 29)" fill="#F4B740"/>
+          <ellipse cx="37" cy="29" rx="3.5" ry="6.5" transform="rotate(25 37 29)" fill="#F4B740"/>
+          <ellipse cx="27" cy="40" rx="3.5" ry="6.5" transform="rotate(-25 27 40)" fill="#E29A24"/>
+          <ellipse cx="37" cy="40" rx="3.5" ry="6.5" transform="rotate(25 37 40)" fill="#E29A24"/>
+        </svg>`;
+      }
+      if (cropId === 'maize') {
+        return `<svg viewBox="0 0 64 64" class="w-11 h-11" aria-hidden="true">
+          <ellipse cx="32" cy="32" rx="10" ry="17" fill="#F4B740" stroke="#E26D38" stroke-width="2"/>
+          <path d="M 22 36 C 14 34, 12 45, 22 48" fill="#68B849"/>
+          <path d="M 42 36 C 50 34, 52 45, 42 48" fill="#68B849"/>
+          <circle cx="29" cy="25" r="1.8" fill="#B45309"/>
+          <circle cx="35" cy="25" r="1.8" fill="#B45309"/>
+          <circle cx="29" cy="32" r="1.8" fill="#B45309"/>
+          <circle cx="35" cy="32" r="1.8" fill="#B45309"/>
+        </svg>`;
+      }
+      if (cropId === 'tomato') {
+        return `<svg viewBox="0 0 64 64" class="w-11 h-11" aria-hidden="true">
+          <circle cx="32" cy="36" r="14" fill="#EF4444" stroke="#FCA5A5" stroke-width="2"/>
+          <path d="M 32 22 L 32 13 M 25 22 L 32 17 L 39 22 M 25 22 L 20 18 M 39 22 L 44 18" stroke="#68B849" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+          <circle cx="28" cy="32" r="2.2" fill="#FEE2E2" opacity="0.7"/>
+        </svg>`;
+      }
+      if (cropId === 'potato') {
+        return `<svg viewBox="0 0 64 64" class="w-11 h-11" aria-hidden="true">
+          <ellipse cx="32" cy="35" rx="15" ry="18" fill="#C2410C" stroke="#FDBA74" stroke-width="2"/>
+          <circle cx="27" cy="29" r="2.1" fill="#78350F"/>
+          <circle cx="37" cy="34" r="2.1" fill="#78350F"/>
+          <circle cx="29" cy="42" r="2.1" fill="#78350F"/>
+          <path d="M 32 17 C 27 12, 23 14, 22 18 C 27 20, 30 20, 32 17 M 32 17 C 37 12, 41 14, 42 18 C 37 20, 34 20, 32 17" fill="#68B849"/>
+        </svg>`;
+      }
+      return `<svg viewBox="0 0 64 64" class="w-11 h-11" aria-hidden="true">
+        <circle cx="32" cy="35" r="14" fill="#E26D38" stroke="#FDBA74" stroke-width="2"/>
+        <path d="M 32 21 L 32 13 M 26 20 L 32 16 L 38 20" stroke="#68B849" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+        <circle cx="28" cy="31" r="2.2" fill="#FED7AA" opacity="0.7"/>
+      </svg>`;
+    }
+
+    function renderCircularCropsBar(userFields, perFieldMetrics) {
+      const grid = document.getElementById('circular-crops-grid');
+      const statusBadge = document.getElementById('crop-registration-status');
+      const noCropsNotice = document.getElementById('no-crops-notice');
+
+      const cropTotals = new Map();
+      userFields.forEach(fld => {
+        const m = perFieldMetrics.get(fld.id);
+        const daily = m ? m.dailyLitres : 0;
+        const prev = cropTotals.get(fld.cropType) || { count: 0, dailyLitres: 0, firstFieldId: fld.id };
+        cropTotals.set(fld.cropType, {
+          count: prev.count + 1,
+          dailyLitres: prev.dailyLitres + daily,
+          firstFieldId: prev.firstFieldId
+        });
+      });
+
+      const registeredCropIds = Array.from(cropTotals.keys());
+
+      if (registeredCropIds.length === 0) {
+        statusBadge.textContent = 'No crops registered yet';
+        noCropsNotice.classList.remove('hidden');
+
+        // Display circular crop option cards so the user can choose a crop to register.
+        grid.innerHTML = Object.values(CROP_DB).map(crop => `
+          <button type="button" onclick="chooseCropToRegister('${crop.id}')" class="crop-medallion-card rounded-2xl p-4 flex flex-col items-center text-center cursor-pointer group">
+            <div class="w-20 h-20 rounded-full bg-[#120806] border-2 border-[#43231D] group-hover:border-[#F4B740] flex items-center justify-center shadow-inner mb-2.5">
+              ${getCropArtworkSvg(crop.id)}
+            </div>
+            <span class="font-extrabold text-sm text-[#FFF8EE]">${crop.name}</span>
+            <span class="text-xs font-bold text-[#C6A88E] mt-1">0 L/day • Click to Add</span>
+          </button>
+        `).join('');
+        return;
+      }
+
+      noCropsNotice.classList.add('hidden');
+      statusBadge.textContent = `${registeredCropIds.length} Registered ${registeredCropIds.length === 1 ? 'Crop' : 'Crops'} • ${userFields.length} ${userFields.length === 1 ? 'Field' : 'Fields'}`;
+
+      grid.innerHTML = registeredCropIds.map(cropId => {
+        const crop = CROP_DB[cropId] || CROP_DB.rice;
+        const info = cropTotals.get(cropId);
+        const isActive = appState.selectedCropFilter === cropId;
+
+        return `
+          <button type="button" onclick="selectRegisteredCrop('${cropId}', '${info.firstFieldId}')" class="crop-medallion-card ${isActive ? 'is-active' : ''} rounded-2xl p-4 flex flex-col items-center text-center cursor-pointer group">
+            <div class="w-20 h-20 rounded-full bg-[#120806] border-2 ${isActive ? 'border-[#F4B740]' : 'border-[#43231D] group-hover:border-[#F4B740]'} flex items-center justify-center shadow-inner mb-2.5">
+              ${getCropArtworkSvg(cropId)}
+            </div>
+            <span class="font-extrabold text-sm text-[#FFF8EE]">${crop.name}</span>
+            <span class="text-sm font-black text-[#86EFAC] mt-1">${Math.round(info.dailyLitres).toLocaleString()} L/day</span>
+            <span class="text-[11px] text-[#C6A88E] mt-0.5">${info.count} ${info.count === 1 ? 'field' : 'fields'}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function chooseCropToRegister(cropId) {
+      if (!appState.currentUser) {
+        openAuthModal('register');
+        return;
+      }
+      const selectEl = document.getElementById('new-field-crop');
+      if (selectEl) selectEl.value = cropId;
+      focusStep(2, true);
+      showToast('Crop Selected', `${CROP_DB[cropId].name} selected in Step 2. Enter your field name and area to register.`, 'info');
+    }
+
+    function selectRegisteredCrop(cropId, firstFieldId) {
+      appState.selectedCropFilter = cropId;
+      if (firstFieldId) appState.selectedFieldId = firstFieldId;
+      saveAppState();
+      recalculateAll();
+    }
+
+    // -----------------------------------------------------------------------
+    // 5. OPEN-METEO WEATHER FETCHING & FORECAST DISPLAY
+    // -----------------------------------------------------------------------
+    async function fetchWeatherData(showNotice = false, customLat = null, customLon = null) {
+      const lat = customLat ?? (appState.currentUser ? appState.currentUser.lat : weatherData.lat);
+      const lon = customLon ?? (appState.currentUser ? appState.currentUser.lon : weatherData.lon);
+      weatherData.lat = lat;
+      weatherData.lon = lon;
+
+      const badge = document.getElementById('weather-source-badge');
+      badge.textContent = 'Fetching Open-Meteo...';
+
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,shortwave_radiation_sum,et0_fao_evapotranspiration&timezone=auto&forecast_days=5`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        const curr = data.current || {};
+        const daily = data.daily || {};
+        const rainArr = daily.precipitation_sum || [0, 0, 0, 0, 0];
+        const et0Arr = daily.et0_fao_evapotranspiration || [4.8];
+        const solarArr = daily.shortwave_radiation_sum || [18.5];
+        const tMaxArr = daily.temperature_2m_max || [33.0];
+        const tMinArr = daily.temperature_2m_min || [23.0];
+
+        weatherData.temp = curr.temperature_2m ?? tMaxArr[0] ?? 31.0;
+        weatherData.humidity = curr.relative_humidity_2m ?? 65;
+        weatherData.windSpeed = curr.wind_speed_10m ?? 10.5;
+        weatherData.rainfallToday = Number(rainArr[0] ?? 0);
+        weatherData.forecastRain48h = Number(((rainArr[0] || 0) + (rainArr[1] || 0)).toFixed(1));
+        weatherData.solarRadiation = Number((solarArr[0] ?? 18.0).toFixed(1));
+        weatherData.tempMax = tMaxArr[0] ?? 33.5;
+        weatherData.tempMin = tMinArr[0] ?? 23.0;
+        weatherData.et0 = Number((et0Arr[0] ?? 4.8).toFixed(2));
+        weatherData.source = 'Open-Meteo Live';
+        weatherData.daily = (daily.time || []).slice(0, 5).map((dateStr, idx) => ({
+          date: dateStr,
+          rain: Number((rainArr[idx] ?? 0).toFixed(1)),
+          et0: Number((et0Arr[idx] ?? weatherData.et0).toFixed(1)),
+          tmax: Math.round(tMaxArr[idx] ?? 32)
+        }));
+
+        if (appState.et0Override === null) {
+          document.getElementById('sim-et0-input').value = weatherData.et0.toFixed(1);
+        }
+
+        badge.textContent = 'Open-Meteo Live';
+        if (showNotice) {
+          showToast('Weather Updated', `Fetched Open-Meteo forecast (ET₀ ${weatherData.et0} mm/day).`, 'success');
+        }
+      } catch (err) {
+        console.warn('Open-Meteo fallback engaged:', err);
+        weatherData.source = 'Regional Fallback';
+        weatherData.daily = [
+          { date: 'Day 1', rain: 0.0, et0: 4.8, tmax: 33 },
+          { date: 'Day 2', rain: 1.2, et0: 4.6, tmax: 32 },
+          { date: 'Day 3', rain: 0.0, et0: 5.0, tmax: 34 },
+          { date: 'Day 4', rain: 2.5, et0: 4.5, tmax: 31 },
+          { date: 'Day 5', rain: 0.0, et0: 4.9, tmax: 33 }
+        ];
+        badge.textContent = 'Regional Fallback';
+        if (showNotice) {
+          showToast('Using Fallback Weather', 'Could not reach Open-Meteo right now; showing safe regional baseline.', 'warn');
+        }
+      }
+
+      renderWeatherUI();
+      recalculateAll();
+    }
+
+    function onRainSliderChange(val) {
+      appState.rainSliderMm = parseFloat(val) || 0;
+      document.getElementById('sim-rain-value').textContent = `${appState.rainSliderMm.toFixed(1)} mm`;
+      saveAppState();
+      recalculateAll();
+    }
+
+    function onEt0OverrideChange(val) {
+      const parsed = parseFloat(val);
+      appState.et0Override = Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+      saveAppState();
+      recalculateAll();
+    }
+
+    function renderWeatherUI() {
+      const effectiveRain48h = Number((weatherData.forecastRain48h + appState.rainSliderMm).toFixed(1));
+      const activeEt0 = appState.et0Override ?? weatherData.et0;
+
+      document.getElementById('wx-temp').textContent = `${Number(weatherData.temp).toFixed(1)}°C`;
+      document.getElementById('wx-minmax').textContent = `Min ${Number(weatherData.tempMin).toFixed(0)}° / Max ${Number(weatherData.tempMax).toFixed(0)}°`;
+      document.getElementById('wx-humidity').textContent = `${Math.round(weatherData.humidity)}%`;
+      document.getElementById('wx-wind').textContent = `Wind ${Number(weatherData.windSpeed).toFixed(1)} km/h`;
+      document.getElementById('wx-rain').textContent = `${effectiveRain48h.toFixed(1)} mm`;
+      document.getElementById('wx-solar').textContent = `Solar ${Number(weatherData.solarRadiation).toFixed(1)} MJ/m²`;
+      document.getElementById('wx-et0').textContent = `${Number(activeEt0).toFixed(2)} mm/day`;
+      document.getElementById('hero-metric-rain').textContent = `${effectiveRain48h.toFixed(1)} MM`;
+
+      const strip = document.getElementById('forecast-strip');
+      strip.innerHTML = weatherData.daily.map((d, idx) => {
+        const dayRain = idx < 2 ? Number((d.rain + appState.rainSliderMm / 2).toFixed(1)) : d.rain;
+        const dayLabel = idx === 0 ? 'Today' : idx === 1 ? 'Tomorrow' : d.date.slice(5);
+        return `
+          <div class="p-2 rounded-xl earth-recessed">
+            <div class="text-[11px] font-bold text-[#F4B740]">${dayLabel}</div>
+            <div class="text-xs font-extrabold text-[#FFF8EE] mt-0.5">${d.tmax}°C</div>
+            <div class="text-[11px] text-amber-300 mt-0.5">🌧 ${dayRain.toFixed(1)} mm</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // -----------------------------------------------------------------------
+    // 6. FAO-56 WATER ENGINE, SOIL BALANCE, RECOMMENDATIONS & DASHBOARD
+    // -----------------------------------------------------------------------
+    function recalculateAll() {
+      const userFields = getUserFields();
+      const userLogs = getUserLogs();
+      const activeEt0 = appState.et0Override ?? weatherData.et0;
+      const rain48h = Number((weatherData.forecastRain48h + appState.rainSliderMm).toFixed(1));
+      const effectiveRainMm = Number((rain48h * 0.75).toFixed(1));
+
+      const methodEl = document.getElementById('log-method-select');
+      const selectedMethod = methodEl ? methodEl.value : 'drip';
+      const efficiency = METHOD_EFFICIENCY[selectedMethod] || 0.80;
+
+      const perFieldMetrics = new Map();
+      let totalDailyLitres = 0;
+
+      userFields.forEach(fld => {
+        const crop = CROP_DB[fld.cropType] || CROP_DB.rice;
+        const soil = SOIL_DB[fld.soilType] || SOIL_DB.loamy;
+        const kcVal = crop.kc[fld.growthStage] ?? crop.kc.mid;
+        const etcMm = Number((activeEt0 * kcVal).toFixed(2));
+        // 1 mm depth over 1 m² = 1 Litre
+        const dailyLitres = etcMm * Number(fld.areaM2 || 0);
+
+        const totalAvailableWaterMm = soil.awcMmPerM * crop.rootDepthM;
+        const madThresholdMm = totalAvailableWaterMm * crop.mad;
+
+        const fieldLogs = userLogs.filter(l => l.fieldId === fld.id);
+        const recentWaterLitres = fieldLogs.reduce((sum, l) => sum + (Number(l.litres) || 0), 0);
+        const recentWaterMm = fld.areaM2 > 0 ? recentWaterLitres / fld.areaM2 : 0;
+
+        // Software water-balance estimate (bounded to realistic depletion range)
+        const baseDepletion = Math.max(4, etcMm * 3.2 - effectiveRainMm * 0.6 - recentWaterMm * 0.45);
+        const depletionMm = Number(Math.min(totalAvailableWaterMm * 0.85, Math.max(1.5, baseDepletion)).toFixed(1));
+        const availableMoisturePct = Math.max(12, Math.min(96, Math.round((1 - depletionMm / totalAvailableWaterMm) * 100)));
+
+        const netDepthMm = Math.max(0, Number((depletionMm - effectiveRainMm * 0.4).toFixed(1)));
+        const netLitres = netDepthMm * Number(fld.areaM2 || 0);
+        const grossLitres = Math.round(netLitres / efficiency);
+
+        perFieldMetrics.set(fld.id, {
+          kcVal,
+          etcMm,
+          dailyLitres,
+          totalAvailableWaterMm,
+          madThresholdMm,
+          depletionMm,
+          availableMoisturePct,
+          netDepthMm,
+          grossLitres
+        });
+
+        totalDailyLitres += dailyLitres;
+      });
+
+      // Calculate estimated water savings vs conventional flood irrigation (60% efficiency)
+      const totalLoggedLitres = userLogs.reduce((sum, l) => sum + (Number(l.litres) || 0), 0);
+      const savedLitres = userLogs.reduce((sum, l) => {
+        const mEff = METHOD_EFFICIENCY[l.method] || 0.70;
+        if (mEff > 0.60) {
+          const floodEquivalent = (Number(l.litres) || 0) * (mEff / 0.60);
+          return sum + Math.max(0, Math.round(floodEquivalent - Number(l.litres)));
+        }
+        return sum;
+      }, 0);
+
+      // Selected field for Steps 4, 5 & 6
+      const activeField = userFields.find(f => f.id === appState.selectedFieldId) || userFields[0] || null;
+      const activeMetrics = activeField ? perFieldMetrics.get(activeField.id) : null;
+
+      latestCalcSummary = {
+        totalDailyLitres: Math.round(totalDailyLitres),
+        selectedDailyLitres: activeMetrics ? Math.round(activeMetrics.dailyLitres) : 0,
+        recommendedGrossLitres: activeMetrics ? activeMetrics.grossLitres : 0,
+        recommendedNetMm: activeMetrics ? activeMetrics.netDepthMm : 0,
+        totalWaterSavedLitres: savedLitres
+      };
+
+      // Update Hero 4-Column Metrics Strip
+      document.getElementById('hero-metric-water').textContent =
+        userFields.length > 0 ? `${Math.round(totalDailyLitres).toLocaleString()} L/DAY` : '-- L/DAY';
+      document.getElementById('hero-metric-fields').textContent = String(userFields.length).padStart(2, '0');
+      document.getElementById('hero-metric-saved').textContent = `${savedLitres.toLocaleString()} L`;
+
+      renderCircularCropsBar(userFields, perFieldMetrics);
+      renderFieldsList(userFields, perFieldMetrics);
+      renderStep4ToStep6(activeField, activeMetrics, rain48h, selectedMethod);
+      renderDashboard(userFields, userLogs, perFieldMetrics, totalDailyLitres, totalLoggedLitres, savedLitres, rain48h);
+    }
+
+    function renderStep4ToStep6(activeField, metrics, rain48h, method) {
+      const calcBadge = document.getElementById('active-calc-field-badge');
+      const kcEl = document.getElementById('calc-kc');
+      const kcStageEl = document.getElementById('calc-kc-stage');
+      const etcEl = document.getElementById('calc-etc');
+      const dailyLEl = document.getElementById('calc-litres-per-day');
+      const areaRefEl = document.getElementById('calc-area-ref');
+      const grossNoteEl = document.getElementById('calc-gross-note');
+
+      const moistPctEl = document.getElementById('soil-moisture-pct');
+      const moistBarEl = document.getElementById('soil-moisture-bar');
+      const depEl = document.getElementById('soil-depletion-mm');
+      const madEl = document.getElementById('soil-mad-mm');
+      const soilBadge = document.getElementById('soil-balance-status-badge');
+
+      const recPill = document.getElementById('rec-action-pill');
+      const recHeadline = document.getElementById('rec-headline');
+      const recReason = document.getElementById('rec-reason');
+      const recDailyEl = document.getElementById('rec-daily-litres');
+      const recWindowEl = document.getElementById('rec-window-text');
+      const recGrossEl = document.getElementById('rec-gross-litres');
+      const recDepthEl = document.getElementById('rec-depth-mm');
+      const recConfEl = document.getElementById('rec-confidence');
+
+      if (!activeField || !metrics) {
+        calcBadge.textContent = 'No Field Selected';
+        kcEl.textContent = '1.05';
+        kcStageEl.textContent = 'Awaiting field';
+        etcEl.textContent = '0.00 mm/d';
+        dailyLEl.textContent = '0 L/day';
+        areaRefEl.textContent = 'Add a field in Step 2';
+        grossNoteEl.textContent = 'Register a field in Step 2 to compute exact Litres/day and gross irrigation volume adjusted for method efficiency.';
+
+        moistPctEl.textContent = '--%';
+        moistBarEl.style.width = '0%';
+        depEl.textContent = '-- mm';
+        madEl.textContent = '-- mm';
+        soilBadge.textContent = 'Awaiting Field';
+
+        recPill.textContent = 'Register a Field';
+        recPill.className = 'px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-[#120806] text-[#E5C9B0] border border-[#43231D]';
+        recHeadline.textContent = 'No active field registered yet';
+        recReason.textContent = 'Sign in and register a field in Step 2 to see plain-language irrigation advice, daily water need in Litres/day, and recommended volume.';
+        recDailyEl.textContent = '0 L/day';
+        recWindowEl.textContent = 'Timing: Pending field';
+        recGrossEl.textContent = '0 L';
+        recDepthEl.textContent = 'Net depth: 0.0 mm';
+        recConfEl.textContent = 'Pending';
+        return;
+      }
+
+      const crop = CROP_DB[activeField.cropType] || CROP_DB.rice;
+      const effPct = Math.round((METHOD_EFFICIENCY[method] || 0.80) * 100);
+
+      calcBadge.textContent = `${activeField.name} • ${crop.name}`;
+      kcEl.textContent = metrics.kcVal.toFixed(2);
+      kcStageEl.textContent = `Stage: ${activeField.growthStage}`;
+      etcEl.textContent = `${metrics.etcMm.toFixed(2)} mm/d`;
+      dailyLEl.textContent = `${Math.round(metrics.dailyLitres).toLocaleString()} L/day`;
+      areaRefEl.textContent = `${metrics.etcMm.toFixed(2)} mm × ${Number(activeField.areaM2).toLocaleString()} m²`;
+      grossNoteEl.textContent = `At ${effPct}% ${method} irrigation efficiency, applying ${metrics.netDepthMm.toFixed(1)} mm net depth requires approximately ${metrics.grossLitres.toLocaleString()} Litres gross water.`;
+
+      moistPctEl.textContent = `${metrics.availableMoisturePct}%`;
+      moistBarEl.style.width = `${metrics.availableMoisturePct}%`;
+      depEl.textContent = `${metrics.depletionMm.toFixed(1)} mm`;
+      madEl.textContent = `${metrics.madThresholdMm.toFixed(1)} mm`;
+
+      const needsWaterNow = metrics.depletionMm >= metrics.madThresholdMm * 0.85;
+      const rainCoversNeed = rain48h >= 12 && metrics.depletionMm < metrics.madThresholdMm * 1.15;
+
+      if (rainCoversNeed) {
+        soilBadge.textContent = 'Rain Expected';
+        recPill.textContent = 'Hold — Rain Expected';
+        recPill.className = 'px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-400/40';
+        recHeadline.textContent = `Hold irrigation for ${activeField.name} (${crop.name}) — rainfall forecast is favorable`;
+        recReason.textContent = `Your ${crop.name} field uses about ${Math.round(metrics.dailyLitres).toLocaleString()} Litres/day, but ${rain48h.toFixed(1)} mm of rainfall is expected over the next 48 hours. Wait and re-check soil depletion after rain.`;
+        recWindowEl.textContent = 'Timing: Re-check in 48 hrs';
+      } else if (needsWaterNow) {
+        soilBadge.textContent = 'Approaching Threshold';
+        recPill.textContent = 'Irrigate Soon';
+        recPill.className = 'px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-[#F4B740]/20 text-[#F4B740] border border-[#F4B740]/50';
+        recHeadline.textContent = `Your ${crop.name} field (${activeField.name}) may require irrigation within 24 hours`;
+        recReason.textContent = `Estimated soil-water depletion is ${metrics.depletionMm.toFixed(1)} mm against a ${metrics.madThresholdMm.toFixed(1)} mm threshold, with ${rain48h.toFixed(1)} mm rain expected over 48 hours. Daily crop demand is ${Math.round(metrics.dailyLitres).toLocaleString()} Litres/day.`;
+        recWindowEl.textContent = 'Timing: Early morning or dusk';
+      } else {
+        soilBadge.textContent = 'Within Safe Range';
+        recPill.textContent = 'Moisture Adequate';
+        recPill.className = 'px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-[#68B849]/20 text-[#86EFAC] border border-[#68B849]/40';
+        recHeadline.textContent = `Estimated moisture for ${activeField.name} (${crop.name}) is within safe range`;
+        recReason.textContent = `Estimated depletion (${metrics.depletionMm.toFixed(1)} mm) has not crossed the watering threshold (${metrics.madThresholdMm.toFixed(1)} mm). Planned daily use is ${Math.round(metrics.dailyLitres).toLocaleString()} Litres/day.`;
+        recWindowEl.textContent = 'Timing: Monitor over next 2 days';
+      }
+
+      recDailyEl.textContent = `${Math.round(metrics.dailyLitres).toLocaleString()} L/day`;
+      recGrossEl.textContent = `${metrics.grossLitres.toLocaleString()} L`;
+      recDepthEl.textContent = `Net depth: ${metrics.netDepthMm.toFixed(1)} mm`;
+      recConfEl.textContent = weatherData.source === 'Open-Meteo Live' ? 'High (Live Wx)' : 'Moderate';
+    }
+
+    function renderDashboard(userFields, userLogs, perFieldMetrics, totalDailyLitres, totalLoggedLitres, savedLitres, rain48h) {
+      const uniqueCrops = new Set(userFields.map(f => f.cropType));
+      document.getElementById('dash-daily-litres').textContent = `${Math.round(totalDailyLitres).toLocaleString()} L/day`;
+      document.getElementById('dash-active-crops-summary').textContent = `${uniqueCrops.size} active ${uniqueCrops.size === 1 ? 'crop' : 'crops'}`;
+      document.getElementById('dash-total-logged').textContent = `${totalLoggedLitres.toLocaleString()} L`;
+      document.getElementById('dash-irrigation-count').textContent = `${userLogs.length} ${userLogs.length === 1 ? 'irrigation' : 'irrigations'} recorded`;
+      document.getElementById('dash-water-saved').textContent = `${savedLitres.toLocaleString()} L`;
+      document.getElementById('dash-fields-count').textContent = String(userFields.length);
+
+      // Smart Alerts
+      const alertsBox = document.getElementById('smart-alerts-list');
+      if (!appState.currentUser) {
+        alertsBox.innerHTML = `<div class="p-3 rounded-xl earth-recessed text-[#E5C9B0]">Sign in to receive personalized irrigation and rainfall alerts for your fields.</div>`;
+      } else if (userFields.length === 0) {
+        alertsBox.innerHTML = `<div class="p-3 rounded-xl earth-recessed text-[#E5C9B0]">No fields registered yet. Add your first field in Step 2 to generate alerts.</div>`;
+      } else {
+        const items = [];
+        if (rain48h >= 12) {
+          items.push(`<div class="p-3 rounded-xl bg-sky-500/15 border border-sky-400/30 text-sky-200">🌧 <strong>Expected Rainfall:</strong> ${rain48h.toFixed(1)} mm forecast over 48 hours may reduce immediate watering needs.</div>`);
+        }
+        userFields.forEach(fld => {
+          const m = perFieldMetrics.get(fld.id);
+          if (m && m.depletionMm >= m.madThresholdMm * 0.85) {
+            items.push(`<div class="p-3 rounded-xl bg-[#F4B740]/15 border border-[#F4B740]/35 text-[#FFF8EE]">💧 <strong>${escapeHtml(fld.name)}:</strong> Estimated depletion (${m.depletionMm.toFixed(1)} mm) is nearing threshold (${Math.round(m.dailyLitres).toLocaleString()} L/day).</div>`);
+          }
+        });
+        if (items.length === 0) {
+          items.push(`<div class="p-3 rounded-xl bg-[#68B849]/15 border border-[#68B849]/30 text-[#86EFAC]">✅ <strong>All Fields Balanced:</strong> Estimated soil water is within safe operating limits across your ${userFields.length} registered ${userFields.length === 1 ? 'field' : 'fields'}.</div>`);
+        }
+        alertsBox.innerHTML = items.join('');
+      }
+
+      // Field-Wise Water Usage
+      const barsBox = document.getElementById('field-usage-bars');
+      if (userFields.length === 0) {
+        barsBox.innerHTML = `<div class="p-3 rounded-xl earth-recessed text-[#C6A88E]">No field water data yet. Register a field in Step 2 to see daily Litres/day per plot.</div>`;
+      } else {
+        const maxDaily = Math.max(1, ...userFields.map(f => (perFieldMetrics.get(f.id)?.dailyLitres || 0)));
+        barsBox.innerHTML = userFields.map(fld => {
+          const m = perFieldMetrics.get(fld.id) || { dailyLitres: 0 };
+          const crop = CROP_DB[fld.cropType] || CROP_DB.rice;
+          const pct = Math.min(100, Math.round((m.dailyLitres / maxDaily) * 100));
+          const loggedForField = userLogs.filter(l => l.fieldId === fld.id).reduce((s, l) => s + (Number(l.litres) || 0), 0);
+          return `
+            <div class="p-3 rounded-xl earth-recessed">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-[#FFF8EE]">${escapeHtml(fld.name)} <span class="text-[#F4B740]">(${crop.shortName})</span></span>
+                <span class="font-extrabold text-[#86EFAC]">${Math.round(m.dailyLitres).toLocaleString()} L/day</span>
+              </div>
+              <div class="w-full h-2.5 rounded-full bg-[#20100D] overflow-hidden">
+                <div class="h-full rounded-full bg-gradient-to-r from-[#F4B740] to-[#68B849]" style="width: ${pct}%"></div>
+              </div>
+              <div class="text-[11px] text-[#C6A88E] mt-1">Logged to date: ${loggedForField.toLocaleString()} L</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Irrigation History Table
+      const tbody = document.getElementById('irrigation-history-tbody');
+      if (userLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-5 px-3 text-center text-[#C6A88E]">No irrigation records logged yet.</td></tr>`;
+      } else {
+        tbody.innerHTML = userLogs.slice().reverse().map(log => {
+          const fld = userFields.find(f => f.id === log.fieldId);
+          const crop = CROP_DB[log.cropType] || CROP_DB.rice;
+          return `
+            <tr>
+              <td class="py-2.5 px-3 whitespace-nowrap text-[#E5C9B0]">${escapeHtml(log.date)}</td>
+              <td class="py-2.5 px-3 font-bold text-[#FFF8EE]">${escapeHtml(fld ? fld.name : log.fieldName || 'Field')}</td>
+              <td class="py-2.5 px-3 text-[#F4B740]">${crop.name}</td>
+              <td class="py-2.5 px-3 capitalize text-[#E5C9B0]">${escapeHtml(log.method)}</td>
+              <td class="py-2.5 px-3 font-extrabold text-[#86EFAC] whitespace-nowrap">${Number(log.litres).toLocaleString()} L</td>
+              <td class="py-2.5 px-3 text-[#C6A88E]">${Number(log.duration || 0)} min</td>
+              <td class="py-2.5 px-3 text-[#E5C9B0]">${escapeHtml(log.notes || '—')}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    function fillRecommendedLitres() {
+      const amt = latestCalcSummary.recommendedGrossLitres > 0 ? latestCalcSummary.recommendedGrossLitres : latestCalcSummary.selectedDailyLitres;
+      if (amt > 0) {
+        document.getElementById('log-litres-input').value = amt;
+        showToast('Filled Recommended Volume', `Set water quantity to ${amt.toLocaleString()} Litres.`, 'info');
+      } else {
+        showToast('No Recommendation Yet', 'Register a field in Step 2 first to calculate recommended litres.', 'warn');
+      }
+    }
+
+    function recordIrrigationLog(event) {
+      event.preventDefault();
+      if (!appState.currentUser) {
+        openAuthModal('register');
+        return;
+      }
+      const userFields = getUserFields();
+      if (userFields.length === 0) {
+        showToast('No Field Available', 'Please register a field in Step 2 before logging irrigation.', 'warn');
+        return;
+      }
+
+      const fieldId = document.getElementById('log-field-select').value || userFields[0].id;
+      const fld = userFields.find(f => f.id === fieldId) || userFields[0];
+      const date = document.getElementById('log-date-input').value || new Date().toISOString().split('T')[0];
+      const litres = Math.max(1, parseFloat(document.getElementById('log-litres-input').value) || 0);
+      const method = document.getElementById('log-method-select').value;
+      const duration = parseFloat(document.getElementById('log-duration-input').value) || 0;
+      const notes = document.getElementById('log-notes-input').value.trim();
+
+      appState.irrigationLogs.push({
+        id: 'log_' + Date.now(),
+        ownerId: appState.currentUser.id,
+        fieldId: fld.id,
+        fieldName: fld.name,
+        cropType: fld.cropType,
+        date,
+        litres,
+        method,
+        duration,
+        notes
+      });
+
+      saveAppState();
+      document.getElementById('log-notes-input').value = '';
+      recalculateAll();
+      showToast('Irrigation Recorded', `Logged ${litres.toLocaleString()} L for "${fld.name}".`, 'success');
+    }
+
+    // -----------------------------------------------------------------------
+    // 7. STATIC PICTORIAL HERO CANVAS + STICKY NAV + SLOW S-CURVE GLIDE
+    // -----------------------------------------------------------------------
+    function renderStaticHeroCanvas() {
+      const canvas = document.getElementById('hero-pictorial-canvas');
+      const container = document.getElementById('hero-banner-container');
+      if (!canvas || !container) return;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = container.clientWidth || window.innerWidth;
+      const height = container.clientHeight || 720;
+
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      const sx = width / 1600;
+      const sy = height / 860;
+
+      // 1. Deep Reddish-Brown Twilight Sky to Golden-Amber Sunset
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, height);
+      skyGrad.addColorStop(0.00, '#170B09');
+      skyGrad.addColorStop(0.30, '#2B130E');
+      skyGrad.addColorStop(0.55, '#692916');
+      skyGrad.addColorStop(0.70, '#C86722');
+      skyGrad.addColorStop(0.79, '#F4B740');
+      skyGrad.addColorStop(0.86, '#A8681C');
+      skyGrad.addColorStop(1.00, '#170B09');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // 2. Golden Sunset Radial Glow
+      const sunX = width * 0.76;
+      const sunY = height * 0.65;
+      const sunR = Math.max(width, height) * 0.36;
+      const sunGlow = ctx.createRadialGradient(sunX, sunY, 4, sunX, sunY, sunR);
+      sunGlow.addColorStop(0.00, 'rgba(255, 248, 210, 0.92)');
+      sunGlow.addColorStop(0.22, 'rgba(244, 183, 64, 0.55)');
+      sunGlow.addColorStop(0.55, 'rgba(226, 109, 56, 0.20)');
+      sunGlow.addColorStop(1.00, 'rgba(23, 11, 9, 0)');
+      ctx.fillStyle = sunGlow;
+      ctx.fillRect(0, 0, width, height);
+
+      // 3. Distant Horizon, Farmhouses & Tractors
+      const horizonY = height * 0.665;
+      ctx.fillStyle = '#382210';
+      ctx.fillRect(0, horizonY, width, 36 * sy);
+
+      const houseBaseY = horizonY + 4 * sy;
+      ctx.fillStyle = '#22100A';
+      ctx.fillRect(1315 * sx, houseBaseY - 30 * sy, 52 * sx, 30 * sy);
+      ctx.beginPath();
+      ctx.moveTo(1309 * sx, houseBaseY - 30 * sy);
+      ctx.lineTo(1341 * sx, houseBaseY - 50 * sy);
+      ctx.lineTo(1373 * sx, houseBaseY - 30 * sy);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillRect(1382 * sx, houseBaseY - 38 * sy, 66 * sx, 38 * sy);
+      ctx.beginPath();
+      ctx.moveTo(1376 * sx, houseBaseY - 38 * sy);
+      ctx.lineTo(1415 * sx, houseBaseY - 60 * sy);
+      ctx.lineTo(1454 * sx, houseBaseY - 38 * sy);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(244, 183, 64, 0.85)';
+      ctx.fillRect(1332 * sx, houseBaseY - 20 * sy, 8 * sx, 8 * sy);
+      ctx.fillRect(1399 * sx, houseBaseY - 24 * sy, 9 * sx, 9 * sy);
+      ctx.fillRect(1424 * sx, houseBaseY - 24 * sy, 9 * sx, 9 * sy);
+
+      [
+        [1110 * sx, houseBaseY - 2 * sy],
+        [1245 * sx, houseBaseY - 3 * sy]
+      ].forEach(([tx, ty]) => {
+        ctx.fillStyle = '#1B0D08';
+        ctx.fillRect(tx, ty - 13 * sy, 24 * sx, 11 * sy);
+        ctx.fillRect(tx + 10 * sx, ty - 21 * sy, 11 * sx, 9 * sy);
+        ctx.beginPath();
+        ctx.arc(tx + 6 * sx, ty - 2 * sy, 4.8 * sy, 0, Math.PI * 2);
+        ctx.arc(tx + 19 * sx, ty - 1 * sy, 3.4 * sy, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 4. Golden Field Base
+      const fieldTopY = height * 0.682;
+      const fieldGrad = ctx.createLinearGradient(0, fieldTopY, 0, height);
+      fieldGrad.addColorStop(0.00, '#C78A26');
+      fieldGrad.addColorStop(0.35, '#9B6018');
+      fieldGrad.addColorStop(0.75, '#4E2B0E');
+      fieldGrad.addColorStop(1.00, '#170B09');
+      ctx.fillStyle = fieldGrad;
+      ctx.fillRect(0, fieldTopY, width, height - fieldTopY);
+
+      // 5. Center-Pivot Sprinkler Truss & Water Mist Spray
+      const mistGrad = ctx.createLinearGradient(0, 420 * sy, 0, 650 * sy);
+      mistGrad.addColorStop(0.00, 'rgba(255, 251, 235, 0.62)');
+      mistGrad.addColorStop(1.00, 'rgba(244, 183, 64, 0)');
+      ctx.fillStyle = mistGrad;
+      ctx.beginPath();
+      ctx.moveTo(20 * sx, 425 * sy);
+      ctx.lineTo(940 * sx, 555 * sy);
+      ctx.lineTo(955 * sx, 620 * sy);
+      ctx.lineTo(10 * sx, 650 * sy);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = '#1C110D';
+      ctx.lineWidth = Math.max(3.5, 6 * sx);
+      ctx.beginPath();
+      ctx.moveTo(-10 * sx, 368 * sy);
+      ctx.lineTo(980 * sx, 562 * sy);
+      ctx.stroke();
+
+      ctx.lineWidth = Math.max(3.5, 5.5 * sx);
+      ctx.beginPath();
+      ctx.moveTo(265 * sx, 392 * sy);
+      ctx.lineTo(165 * sx, 644 * sy);
+      ctx.moveTo(265 * sx, 392 * sy);
+      ctx.lineTo(435 * sx, 644 * sy);
+      ctx.moveTo(165 * sx, 644 * sy);
+      ctx.lineTo(435 * sx, 644 * sy);
+      ctx.stroke();
+
+      [[165 * sx, 644 * sy, 30 * sy], [435 * sx, 644 * sy, 30 * sy]].forEach(([wx, wy, wr]) => {
+        ctx.beginPath();
+        ctx.arc(wx, wy, wr, 0, Math.PI * 2);
+        ctx.fillStyle = '#16100E';
+        ctx.fill();
+      });
+
+      // 6. Farmer on Right Inspecting a Tablet
+      const fx = 1320 * sx;
+      const fy = 740 * sy;
+      ctx.fillStyle = '#1A0E0A';
+      ctx.beginPath();
+      ctx.arc(fx, fy - 92 * sy, 12 * sy, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillRect(fx - 14 * sx, fy - 78 * sy, 28 * sx, 46 * sy);
+      ctx.fillRect(fx - 13 * sx, fy - 32 * sy, 11 * sx, 36 * sy);
+      ctx.fillRect(fx + 2 * sx, fy - 32 * sy, 11 * sx, 36 * sy);
+      ctx.fillStyle = '#38BDF8';
+      ctx.fillRect(fx - 26 * sx, fy - 62 * sy, 16 * sx, 11 * sy);
+
+      // 7. Foreground Golden Wheat Stalks
+      for (let i = 0; i < 240; i++) {
+        const s1 = Math.sin(i * 12.9898) * 43758.5453;
+        const r1 = s1 - Math.floor(s1);
+        const x = (i / 240) * width + (r1 - 0.5) * 14;
+        const y0 = height * (0.82 + r1 * 0.20);
+        const h = (55 + r1 * 75) * sy;
+        ctx.strokeStyle = i % 2 === 0 ? '#784812' : '#4A2B0A';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(x, y0);
+        ctx.quadraticCurveTo(x + (r1 - 0.5) * 18 * sx, y0 - h * 0.5, x + (r1 - 0.5) * 24 * sx, y0 - h);
+        ctx.stroke();
+
+        ctx.fillStyle = '#F4B740';
+        ctx.beginPath();
+        ctx.ellipse(x + (r1 - 0.5) * 24 * sx, y0 - h, 3 * sx, 11 * sy, (r1 - 0.5) * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    // Slow, smooth scroll interpolation (LERP_FACTOR = 0.030)
+    let currentTrackProgress = 0.02;
+    let targetTrackProgress = 0.02;
+    const LERP_FACTOR = 0.030;
+
+    function focusStep(stepNum, shouldScroll = true) {
+      const targetEl = document.getElementById(`step-${stepNum}`);
+      if (targetEl && shouldScroll) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      targetTrackProgress = Math.min(0.98, Math.max(0.02, (stepNum - 1) / 6));
+      const labelEl = document.getElementById('traveler-step-label');
+      if (labelEl) labelEl.textContent = `STEP ${stepNum}`;
+    }
+
+    function initScrollMechanics() {
+      const heroEl = document.getElementById('hero-banner-container');
+      const stickyNav = document.getElementById('sticky-navbar');
+      const wrapper = document.getElementById('winding-ladder-wrapper');
+      const pathEl = document.getElementById('winding-s-path');
+      const traveler = document.getElementById('crop-track-traveler');
+      const labelEl = document.getElementById('traveler-step-label');
+      const totalLen = pathEl ? pathEl.getTotalLength() : 0;
+
+      renderStaticHeroCanvas();
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderStaticHeroCanvas, 120);
+      }, { passive: true });
+
+      window.addEventListener('scroll', () => {
+        const heroBottom = heroEl ? heroEl.getBoundingClientRect().bottom : 0;
+        const pastHero = heroBottom < 80;
+        stickyNav.classList.toggle('-translate-y-full', !pastHero);
+        stickyNav.classList.toggle('opacity-0', !pastHero);
+        stickyNav.classList.toggle('pointer-events-none', !pastHero);
+        stickyNav.classList.toggle('translate-y-0', pastHero);
+        stickyNav.classList.toggle('opacity-100', pastHero);
+
+        if (wrapper) {
+          const rect = wrapper.getBoundingClientRect();
+          const vh = window.innerHeight;
+          const totalTravel = rect.height - vh * 0.45;
+          if (totalTravel > 0) {
+            const scrolled = Math.min(totalTravel, Math.max(0, vh * 0.35 - rect.top));
+            targetTrackProgress = Math.min(0.98, Math.max(0.02, scrolled / totalTravel));
+          }
+          const approxStep = Math.min(7, Math.max(1, Math.round(targetTrackProgress * 6) + 1));
+          if (labelEl) labelEl.textContent = `STEP ${approxStep}`;
+        }
+      }, { passive: true });
+
+      function animateTrackGlide() {
+        currentTrackProgress += (targetTrackProgress - currentTrackProgress) * LERP_FACTOR;
+
+        if (pathEl && traveler && wrapper && totalLen > 0) {
+          const pt = pathEl.getPointAtLength(currentTrackProgress * totalLen);
+          const wRect = wrapper.getBoundingClientRect();
+          const xPx = (pt.x / 1000) * wRect.width;
+          const yPx = (pt.y / 3300) * wRect.height;
+          traveler.style.transform = `translate3d(${xPx}px, ${yPx}px, 0) translate(-50%, -50%)`;
+        }
+
+        requestAnimationFrame(animateTrackGlide);
+      }
+
+      requestAnimationFrame(animateTrackGlide);
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const todayIso = new Date().toISOString().split('T')[0];
+      document.getElementById('new-field-date').value = todayIso;
+      document.getElementById('log-date-input').value = todayIso;
+      document.getElementById('sim-rain-slider').value = appState.rainSliderMm;
+      document.getElementById('sim-rain-value').textContent = `${Number(appState.rainSliderMm).toFixed(1)} mm`;
+      if (appState.et0Override !== null) {
+        document.getElementById('sim-et0-input').value = Number(appState.et0Override).toFixed(1);
+      }
+
+      updateAreaHelper(document.getElementById('new-field-area').value);
+      syncAuthUI();
+      applyFarmerLanguage();
+      renderWeatherUI();
+      recalculateAll();
+      initScrollMechanics();
+      fetchWeatherData(false);
+    });
+  </script>
+</body>
+</html>
